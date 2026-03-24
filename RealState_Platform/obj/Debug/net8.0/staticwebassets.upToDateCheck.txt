@@ -1,5 +1,7 @@
 wwwroot\css\site.css
 wwwroot\favicon.ico
+wwwroot\images\36c1849d-b51b-4455-9c7f-bc5c9f448c4f.png
+wwwroot\images\b240f1c6-715f-47a4-96cf-a6c7228e2c94.png
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map

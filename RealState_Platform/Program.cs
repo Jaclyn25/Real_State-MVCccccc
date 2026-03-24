@@ -16,9 +16,8 @@ namespace RealState_Platform
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages(); // <-- ADDED: Required for Identity UI and Razor Pages 
-
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnection")));
 
             // Add Identity
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
