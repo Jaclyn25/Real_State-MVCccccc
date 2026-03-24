@@ -1,13 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using RealState_Platform.Interfaces;
-using RealState_Platform.Models;
-using Microsoft.EntityFrameworkCore;
-using RealState_Platform.Data;
-using RealState_Platform.ViewModel;
-
-namespace RealState_Platform.Controllers
+﻿namespace RealState_Platform.Controllers
 {
     public class PropertyController : Controller
     {
@@ -27,10 +18,7 @@ namespace RealState_Platform.Controllers
             _userManager = userManager;
             _env = env;
         }
-
-        // =========================================
         // Index (GET) → Search + Pagination
-        // =========================================
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Index(string search, string city, int page = 1)
@@ -62,10 +50,7 @@ namespace RealState_Platform.Controllers
 
             return View(vm);
         }
-
-        // =========================================
         // Details (GET)
-        // =========================================
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Details(int id)
@@ -76,20 +61,14 @@ namespace RealState_Platform.Controllers
 
             return View(property);
         }
-
-        // =========================================
         // Create (GET)
-        // =========================================
         [HttpGet]
         [Authorize(Roles = "Agent")]
         public IActionResult Create()
         {
             return View();
         }
-
-        // =========================================
         // Create (POST)
-        // =========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Agent")]
@@ -152,10 +131,7 @@ namespace RealState_Platform.Controllers
             TempData["Success"] = "Property created successfully!";
             return RedirectToAction("MyListings");
         }
-
-        // =========================================
         // Edit (GET)
-        // =========================================
         [HttpGet]
         [Authorize(Roles = "Agent")]
         public async Task<IActionResult> Edit(int id)
@@ -191,10 +167,7 @@ namespace RealState_Platform.Controllers
 
             return View(vm);
         }
-
-        // =========================================
         // Edit (POST)
-        // =========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Agent")]
@@ -249,10 +222,7 @@ namespace RealState_Platform.Controllers
             TempData["Success"] = "Property updated successfully!";
             return RedirectToAction(nameof(MyListings));
         }
-
-        // =========================================
         // Delete (POST)
-        // =========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Agent")]
@@ -272,10 +242,7 @@ namespace RealState_Platform.Controllers
             TempData["Success"] = "Property deleted successfully!";
             return RedirectToAction(nameof(MyListings));
         }
-
-        // =========================================
         // MyListings (GET)
-        // =========================================
         [HttpGet]
         [Authorize(Roles = "Agent")]
         public async Task<IActionResult> MyListings(string search, string city, int page = 1)

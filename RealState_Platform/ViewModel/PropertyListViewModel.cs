@@ -1,5 +1,4 @@
-﻿using RealState_Platform.Models;
-namespace RealState_Platform.ViewModel
+﻿namespace RealState_Platform.ViewModel
 {
     public class PropertyListViewModel
     {

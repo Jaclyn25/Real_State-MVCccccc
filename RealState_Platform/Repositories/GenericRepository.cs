@@ -1,10 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RealState_Platform.Data;
-using RealState_Platform.Interfaces;
-using RealState_Platform.Models;
-using System.Linq.Expressions;
-
-namespace RealState_Platform.Repositories
+﻿namespace RealState_Platform.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {

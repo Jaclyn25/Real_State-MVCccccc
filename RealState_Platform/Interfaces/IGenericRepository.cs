@@ -1,7 +1,4 @@
-﻿using RealState_Platform.Models;
-using System.Linq.Expressions;
-
-namespace RealState_Platform.Interfaces
+﻿namespace RealState_Platform.Interfaces
 {
     public interface IGenericRepository<T> where T : BaseEntity
     {

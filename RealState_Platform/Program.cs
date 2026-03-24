@@ -1,10 +1,3 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using RealState_Platform.Data;
-using RealState_Platform.Interfaces;
-using RealState_Platform.Models;
-using RealState_Platform.Repositories;
-
 namespace RealState_Platform
 {
     public class Program
@@ -16,6 +9,7 @@ namespace RealState_Platform
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages(); // <-- ADDED: Required for Identity UI and Razor Pages 
+            builder.Services.AddSignalR(); // <-- ADDED: SignalR real-time communication
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnection")));
 
@@ -91,6 +85,11 @@ namespace RealState_Platform
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.MapRazorPages(); // <-- ADDED: Required to map Identity UI/Razor Pages routes
+
+            // Map SignalR Hubs
+            app.MapHub<NotificationHub>("/notificationHub");
+            app.MapHub<InquiryChatHub>("/inquiryChatHub");
+            app.MapHub<CommentHub>("/commentHub");
 
             app.Run();
         }

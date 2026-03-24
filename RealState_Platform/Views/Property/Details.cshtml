@@ -1,10 +1,41 @@
-﻿@model RealState_Platform.Models.Property
+﻿@model Property
+
+@inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = "Property Details";
+    var currentUser = await UserManager.GetUserAsync(User);
 }
 
-<h2 class="mb-4 text-primary">@Model.Title</h2>
+<!-- CSRF Token for AJAX requests -->
+@Html.AntiForgeryToken()
+
+<div class="row mb-4">
+    <div class="col">
+        <h2 class="text-primary">@Model.Title</h2>
+    </div>
+    <div class="col-auto">
+        @if (currentUser != null)
+        {
+            <button class="btn btn-outline-danger add-to-favorite-btn" 
+                    data-property-id="@Model.Id"
+                    title="Add to favorites">
+                <i class="bi bi-heart"></i> Add to Favorites
+            </button>
+            <button class="btn btn-primary" 
+                    data-bs-toggle="modal" data-bs-target="#inquiryModal" 
+                    data-property-id="@Model.Id">
+                <i class="bi bi-envelope"></i> Send Inquiry
+            </button>
+        }
+        else
+        {
+            <a asp-controller="Account" asp-action="Login" class="btn btn-primary">
+                <i class="bi bi-box-arrow-in-right"></i> Login to Contact
+            </a>
+        }
+    </div>
+</div>
 
 <!-- Property Info -->
 <div class="card shadow-sm mb-4 p-4">
@@ -54,3 +85,82 @@
 }
 
 <a asp-action="Index" class="btn btn-secondary">Back to Listings</a>
+
+<!-- Include Inquiry Modal -->
+@if (currentUser != null)
+{
+    @await Html.PartialAsync("~/Views/Inquiry/_SendInquiryModal.cshtml")
+}
+
+<!-- Include Comments Section -->
+<div class="mb-5">
+    @{
+        ViewBag.PropertyId = Model.Id;
+    }
+    @await Html.PartialAsync("~/Views/Shared/_CommentsSection.cshtml")
+</div>
+
+@section Scripts {
+    <script>
+        // Add to Favorites
+        document.querySelectorAll('.add-to-favorite-btn').forEach(btn => {
+            btn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                const propertyId = this.dataset.propertyId;
+                const token = document.querySelector('[name="__RequestVerificationToken"]')?.value;
+
+                try {
+                    const formData = new FormData();
+                    formData.append('propertyId', propertyId);
+                    formData.append('__RequestVerificationToken', token);
+
+                    const response = await fetch('@Url.Action("AddToFavorite", "Favorite")', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        console.error('HTTP Error:', response.status, response.statusText);
+                        const errorText = await response.text();
+                        console.error('Response:', errorText);
+                        showNotification('Failed to add to favorites (HTTP ' + response.status + ')', 'error');
+                        return;
+                    }
+
+                    const text = await response.text();
+                    console.log('Raw response:', text);
+                    
+                    const result = JSON.parse(text);
+                    if (result.success) {
+                        this.classList.add('btn-danger');
+                        this.classList.remove('btn-outline-danger');
+                        this.innerHTML = '<i class="bi bi-heart-fill"></i> In Favorites';
+                        this.disabled = true;
+                        
+                        // Show toast notification
+                        showNotification('Added to favorites!', 'success');
+                    } else {
+                        showNotification(result.message || 'Error adding to favorites', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification('Failed to add to favorites: ' + error.message, 'error');
+                }
+            });
+        });
+
+        function showNotification(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed bottom-0 end-0 m-3`;
+            alertDiv.innerHTML = `
+                <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+    </script>
+}

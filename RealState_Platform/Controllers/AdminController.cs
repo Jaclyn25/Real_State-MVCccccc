@@ -1,11 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using RealState_Platform.Interfaces;
-using RealState_Platform.Models;
-using RealState_Platform.ViewModel;
-
-namespace RealState_Platform.Controllers
+﻿namespace RealState_Platform.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller

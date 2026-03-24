@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace RealState_Platform.ViewModel
+﻿namespace RealState_Platform.ViewModel
 {
     public class PropertyCreateViewModel
     {

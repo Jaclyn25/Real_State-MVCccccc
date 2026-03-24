@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "G:\\After_Graduate\\ITI_Professional_Web_&BI\\MVC\\Final_New_Repo\\RealState_Platform\\RealState_Platform.csproj": {}
+    "C:\\Users\\Lenovo\\GitProjects\\RealState_Platform\\RealState_Platform\\RealState_Platform.csproj": {}
   },
   "projects": {
-    "G:\\After_Graduate\\ITI_Professional_Web_&BI\\MVC\\Final_New_Repo\\RealState_Platform\\RealState_Platform.csproj": {
+    "C:\\Users\\Lenovo\\GitProjects\\RealState_Platform\\RealState_Platform\\RealState_Platform.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "G:\\After_Graduate\\ITI_Professional_Web_&BI\\MVC\\Final_New_Repo\\RealState_Platform\\RealState_Platform.csproj",
+        "projectUniqueName": "C:\\Users\\Lenovo\\GitProjects\\RealState_Platform\\RealState_Platform\\RealState_Platform.csproj",
         "projectName": "RealState_Platform",
-        "projectPath": "G:\\After_Graduate\\ITI_Professional_Web_&BI\\MVC\\Final_New_Repo\\RealState_Platform\\RealState_Platform.csproj",
-        "packagesPath": "C:\\Users\\Blue Lap\\.nuget\\packages\\",
-        "outputPath": "G:\\After_Graduate\\ITI_Professional_Web_&BI\\MVC\\Final_New_Repo\\RealState_Platform\\obj\\",
+        "projectPath": "C:\\Users\\Lenovo\\GitProjects\\RealState_Platform\\RealState_Platform\\RealState_Platform.csproj",
+        "packagesPath": "C:\\Users\\Lenovo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Lenovo\\GitProjects\\RealState_Platform\\RealState_Platform\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Blue Lap\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Lenovo\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -43,8 +44,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.100"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -53,6 +53,10 @@
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.0.0, )"
+            },
+            "Microsoft.AspNetCore.SignalR": {
+              "target": "Package",
+              "version": "[1.2.9, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
@@ -80,24 +84,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.24, 8.0.24]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[8.0.24, 8.0.24]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.24, 8.0.24]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.24, 8.0.24]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -106,7 +92,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

@@ -1,6 +1,4 @@
-﻿using RealState_Platform.Models;
-using System.Collections.Generic;
-namespace RealState_Platform.ViewModel
+﻿namespace RealState_Platform.ViewModel
 {
     public class PropertyIndexViewModel
     {

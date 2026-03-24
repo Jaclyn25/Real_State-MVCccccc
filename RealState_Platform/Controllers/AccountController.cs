@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using RealState_Platform.Models;
-using RealState_Platform.ViewModel;
-
-namespace RealState_Platform.Controllers
+﻿namespace RealState_Platform.Controllers
 {
     public class AccountController : Controller
     {
@@ -28,10 +23,7 @@ namespace RealState_Platform.Controllers
         {
             return View();
         }
-
-        // =========================================
         // Register (POST)
-        // =========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -73,19 +65,13 @@ namespace RealState_Platform.Controllers
 
             return View(model);
         }
-
-        // =========================================
         // Login (GET)
-        // =========================================
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
-
-        // =========================================
         // Login (POST)
-        // =========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -116,10 +102,7 @@ namespace RealState_Platform.Controllers
             ModelState.AddModelError("", "Invalid login attempt.");
             return View(model);
         }
-
-        // =========================================
         // Logout (POST)
-        // =========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()

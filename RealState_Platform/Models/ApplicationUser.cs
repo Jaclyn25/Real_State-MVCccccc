@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace RealState_Platform.Models
+﻿namespace RealState_Platform.Models
 {
     public class ApplicationUser : IdentityUser
     {
