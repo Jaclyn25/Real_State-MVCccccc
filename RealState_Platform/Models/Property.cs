@@ -15,6 +15,8 @@
         public int Bathrooms { get; set; }
         public double Area { get; set; } // Square Feet
         public string Status { get; set; } // Available, Pending, Sold, Rented
+        public bool IsApproved { get; set; } = false;
+
 
         // Features
         public bool HasGarage { get; set; }

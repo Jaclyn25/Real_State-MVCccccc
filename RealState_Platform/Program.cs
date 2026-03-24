@@ -9,7 +9,7 @@ namespace RealState_Platform
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +51,20 @@ namespace RealState_Platform
 
             var app = builder.Build();
 
+            async Task SeedRolesAsync(IServiceProvider serviceProvider)
+            {
+                var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+                string[] roles = { "Admin", "Agent", "Customer" };
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                    {
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                    }
+                }
+            }
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -65,6 +79,12 @@ namespace RealState_Platform
 
             app.UseAuthentication();
             app.UseAuthorization();
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                await SeedRolesAsync(services);
+            }
+
 
             app.MapControllerRoute(
                 name: "default",
