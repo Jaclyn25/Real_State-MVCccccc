@@ -1,0 +1,17 @@
+﻿global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.AspNetCore.SignalR;
+global using RealState_Platform.Hubs;
+global using RealState_Platform.Interfaces;
+global using RealState_Platform.Models;
+global using System.Security.Claims;
+global using RealState_Platform.ViewModel;
+global using System.Diagnostics;
+global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore;
+global using System.Linq.Expressions;
+global using RealState_Platform.Data;
+global using Microsoft.EntityFrameworkCore.Infrastructure;
+global using RealState_Platform.Repositories;
+global using System.ComponentModel.DataAnnotations;
