@@ -1,0 +1,89 @@
+﻿@model RealState_Platform.ViewModel.PropertyEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Property";
+}
+
+<h2 class="mb-4 text-primary">Edit Property</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="PropertyType" />
+    <input type="hidden" asp-for="ListingType" />
+    <input type="hidden" asp-for="Address" />
+    <input type="hidden" asp-for="State" />
+    <input type="hidden" asp-for="ZipCode" />
+    <input type="hidden" asp-for="Area" />
+
+    <!-- Basic Info -->
+    <div class="card shadow-sm mb-4 p-4">
+        <h5 class="mb-3 text-secondary">Basic Information</h5>
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+    </div>
+
+    <!-- Property Details -->
+    <div class="card shadow-sm mb-4 p-4">
+        <h5 class="mb-3 text-secondary">Property Details</h5>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label asp-for="Price" class="form-label"></label>
+                <input asp-for="Price" class="form-control" type="number" min="0" step="0.01" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="City" class="form-label"></label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="Bedrooms" class="form-label"></label>
+                <input asp-for="Bedrooms" class="form-control" type="number" min="0" />
+                <span asp-validation-for="Bedrooms" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Bathrooms" class="form-label"></label>
+                <input asp-for="Bathrooms" class="form-control" type="number" min="0" />
+                <span asp-validation-for="Bathrooms" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Images -->
+    <div class="card shadow-sm mb-4 p-4">
+        <h5 class="mb-3 text-secondary">Property Images</h5>
+
+        <div class="mb-3">
+            <label asp-for="Images" class="form-label"></label>
+            <input asp-for="Images" class="form-control" type="file" multiple />
+            <small class="text-muted">Leave empty if you don't want to change images.</small>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-success px-4">Update</button>
+        <a asp-action="MyListings" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
