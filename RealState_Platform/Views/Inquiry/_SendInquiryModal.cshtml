@@ -1,0 +1,132 @@
+<!-- Inquiry Modal -->
+<div class="modal fade" id="inquiryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title">
+                    <i class="bi bi-envelope"></i> Send Inquiry
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="inquiryForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <input type="hidden" id="propertyId" name="propertyId" />
+                    
+                    <div class="mb-3">
+                        <label for="customerName" class="form-label">Your Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="customerName" name="customerName" 
+                               required placeholder="Enter your full name">
+                        <small class="form-text text-muted">Your name will be shown to the property owner</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="customerEmail" class="form-label">Email Address <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="customerEmail" name="customerEmail" 
+                               required placeholder="your@email.com">
+                        <small class="form-text text-muted">We'll use this to send you updates</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="customerPhone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control" id="customerPhone" name="customerPhone" 
+                               required placeholder="(123) 456-7890">
+                        <small class="form-text text-muted">Property owner may contact you directly</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="message" name="message" rows="4" 
+                                  required placeholder="Tell the owner why you're interested in this property..."
+                                  minlength="10" maxlength="500"></textarea>
+                        <small class="form-text text-muted">Min 10, Max 500 characters</small>
+                    </div>
+
+                    <div id="inquiryAlert"></div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-send"></i> Send Inquiry
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('inquiryForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const propertyId = document.getElementById('propertyId')?.value;
+        
+        console.log('Property ID:', propertyId);
+
+        if (!propertyId || propertyId <= 0) {
+            document.getElementById('inquiryAlert').innerHTML = 
+                '<div class="alert alert-danger">Error: Property ID is missing. Please close and try again.</div>';
+            return;
+        }
+
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetch('@Url.Action("SendInquiry", "Inquiry")', {
+                method: 'POST',
+                body: formData
+            });
+
+            const text = await response.text();
+            console.log('Response status:', response.status);
+            console.log('Response text:', text);
+
+            if (!response.ok) {
+                console.error('HTTP Error:', response.status, text);
+                document.getElementById('inquiryAlert').innerHTML = 
+                    '<div class="alert alert-danger">HTTP Error: ' + response.status + '</div>';
+                return;
+            }
+
+            const result = JSON.parse(text);
+            const alertDiv = document.getElementById('inquiryAlert');
+
+            if (result.success) {
+                alertDiv.innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                    '<i class="bi bi-check-circle"></i> ' + result.message +
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                    '</div>';
+
+                // Reset form
+                this.reset();
+
+                // Close modal after 2 seconds
+                setTimeout(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('inquiryModal'));
+                    if (modal) modal.hide();
+                }, 2000);
+            } else {
+                alertDiv.innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                    '<i class="bi bi-exclamation-circle"></i> ' + result.message +
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                    '</div>';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('inquiryAlert').innerHTML = 
+                '<div class="alert alert-danger">Error: ' + error.message + '</div>';
+        }
+    });
+
+    // Set property ID when opening modal
+    document.addEventListener('show.bs.modal', function(e) {
+        if (e.target.id === 'inquiryModal') {
+            const propertyId = e.relatedTarget?.dataset.propertyId;
+            console.log('Modal opened with propertyId:', propertyId);
+            if (propertyId) {
+                document.getElementById('propertyId').value = propertyId;
+                console.log('Set propertyId field to:', document.getElementById('propertyId').value);
+            }
+        }
+    });
+</script>
