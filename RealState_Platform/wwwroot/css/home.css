@@ -1,0 +1,164 @@
+/* Home (Index) — scoped so it does not override Bootstrap globally */
+.home-landing {
+    --hl-navy: #0c1929;
+    --hl-accent: #c9a84c;
+}
+
+    .home-landing .hero-section {
+        background: linear-gradient(120deg, rgba(12, 25, 41, 0.88) 0%, rgba(26, 75, 140, 0.55) 50%, rgba(12, 25, 41, 0.75) 100%), url("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80") center/cover;
+        padding: clamp(4rem, 12vw, 7rem) 0 clamp(3.5rem, 8vw, 5.5rem);
+        color: #fff;
+    }
+
+        .home-landing .hero-section h1 {
+            font-family: "Outfit", sans-serif;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+    .home-landing .search-box {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    }
+
+        .home-landing .search-box .form-control,
+        .home-landing .search-box .form-select {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+    .home-landing .btn-hero-search {
+        background: linear-gradient(135deg, var(--hl-accent) 0%, #b8923a 100%);
+        border: none;
+        color: var(--hl-navy);
+        font-weight: 700;
+    }
+
+        .home-landing .btn-hero-search:hover {
+            filter: brightness(1.06);
+            color: var(--hl-navy);
+        }
+
+    .home-landing .feature-tile {
+        border-radius: 1rem;
+        border: 1px solid #eef0f4;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+        .home-landing .feature-tile:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+        }
+
+        .home-landing .feature-tile .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(26, 75, 140, 0.12), rgba(201, 168, 76, 0.12));
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a4b8c;
+            font-size: 1.5rem;
+        }
+
+    .home-landing .category-card {
+        border-radius: 1rem;
+        overflow: hidden;
+        position: relative;
+        transition: transform 0.35s ease, box-shadow 0.35s ease;
+        border: none;
+    }
+
+        .home-landing .category-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+        }
+
+        .home-landing .category-card img {
+            height: 280px;
+            object-fit: cover;
+            transition: transform 0.55s ease;
+        }
+
+@media (min-width: 992px) {
+    .home-landing .category-card img {
+        height: 300px;
+    }
+}
+
+.home-landing .category-card:hover img {
+    transform: scale(1.06);
+}
+
+.home-landing .category-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(8, 15, 24, 0.92));
+    padding: 2rem 1.25rem 1.25rem;
+    color: #fff;
+}
+
+.home-landing .section-title {
+    font-family: "Outfit", sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.home-landing .cta-strip {
+    background: linear-gradient(135deg, var(--hl-navy) 0%, #152a45 50%, #0c1929 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+    .home-landing .cta-strip::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 50%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(201, 168, 76, 0.12) 0%, transparent 65%);
+        pointer-events: none;
+    }
+
+    .home-landing .cta-strip .btn-cta {
+        background: linear-gradient(135deg, var(--hl-accent) 0%, #b8923a 100%);
+        border: none;
+        color: var(--hl-navy);
+        font-weight: 700;
+    }
+
+        .home-landing .cta-strip .btn-cta:hover {
+            filter: brightness(1.08);
+            color: var(--hl-navy);
+        }
+
+.home-landing .stats-row {
+    background: #fff;
+    border-bottom: 1px solid #e8ecf2;
+}
+
+.home-landing .stat-item {
+    padding: 1.25rem 0.5rem;
+}
+
+    .home-landing .stat-item strong {
+        font-family: "Outfit", sans-serif;
+        font-size: 1.75rem;
+        color: #1a4b8c;
+        display: block;
+        line-height: 1.2;
+    }
+
+    .home-landing .stat-item span {
+        font-size: 0.8rem;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-weight: 600;
+    }
