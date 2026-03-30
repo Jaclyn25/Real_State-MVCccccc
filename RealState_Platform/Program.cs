@@ -77,7 +77,7 @@ namespace RealState_Platform
             async Task SeedAdminAsync(IServiceProvider serviceProvider)
             {
                 var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var adminEmail = "jacquelineSaad@gmail.com";
+                var adminEmail = "jacqueline25saad@gmail.com";
                 var adminPassword = "Admin@123";
 
                 var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
