@@ -1,4 +1,4 @@
-﻿namespace RealState_Platform.Controllers
+namespace RealState_Platform.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
@@ -34,11 +34,13 @@
         // ================= APPROVE LISTINGS =================
         public async Task<IActionResult> ApproveListings()
         {
-            var properties = await _propertyRepo.FindAsync(p => !p.IsApproved);
+            var all = await _propertyRepo.GetAllAsync(p => p.Images, p => p.Agent);
+            var properties = all.Where(p => !p.IsApproved).OrderByDescending(p => p.CreatedAt);
             return View(properties);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(int id)
         {
             var property = await _propertyRepo.GetByIdAsync(id);
@@ -52,6 +54,7 @@
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(int id)
         {
             var property = await _propertyRepo.GetByIdAsync(id);
@@ -106,6 +109,7 @@
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleUserStatus(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -116,9 +120,27 @@
 
             return RedirectToAction("ManageUsers");
         }
-        public IActionResult Inquiries()
+        public async Task<IActionResult> Inquiries(int page = 1)
         {
-            return View();
+            int pageSize = 10;
+            var all = await _inquiryRepo.GetAllAsync(i => i.Property, i => i.User, i => i.Property.Agent);
+
+            var ordered = all
+                .OrderByDescending(i => i.CreatedAt)
+                .ToList();
+
+            int totalItems = ordered.Count;
+
+            var data = ordered
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.PageNumber = page;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            ViewBag.TotalInquiries = totalItems;
+
+            return View(data);
         }
     }
 

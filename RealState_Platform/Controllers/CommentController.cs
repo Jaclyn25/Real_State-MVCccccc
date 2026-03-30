@@ -26,8 +26,11 @@ namespace RealState_Platform.Controllers
         {
             try
             {
-                var allComments = await _commentRepository.GetAllAsync();
-                var comments = allComments.ToList();
+                // Include User navigation property to load user data
+                var allComments = await _commentRepository.GetAllAsync(c => c.User);
+                var comments = allComments
+                    .Where(c => !c.IsDeleted) // Filter out deleted comments
+                    .ToList();
                 
                 var propertyComments = comments
                     .Where(c => c.PropertyId == propertyId && c.ParentCommentId == null)
@@ -68,7 +71,7 @@ namespace RealState_Platform.Controllers
         private object[] GetReplies(int parentCommentId, List<Comment> allComments)
         {
             return allComments
-                .Where(c => c.ParentCommentId == parentCommentId)
+                .Where(c => c.ParentCommentId == parentCommentId && !c.IsDeleted)
                 .OrderBy(c => c.CreatedAt)
                 .Select(c => new
                 {

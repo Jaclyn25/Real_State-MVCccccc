@@ -1,4 +1,4 @@
-﻿namespace RealState_Platform.Controllers
+namespace RealState_Platform.Controllers
 {
     public class PropertyController : Controller
     {
@@ -26,11 +26,19 @@
             int pageSize = 6;
             var properties = await _propertyRepo.GetAllAsync(p => p.Images);
 
+            // Public catalog: show approved properties (both Available and Sold)
+            properties = properties.Where(p => p.IsApproved);
+
             if (!string.IsNullOrEmpty(search))
                 properties = properties.Where(p => p.Title.Contains(search, StringComparison.OrdinalIgnoreCase));
 
             if (!string.IsNullOrEmpty(city))
                 properties = properties.Where(p => p.City == city);
+
+            // Sort: Available first, then Sold at bottom
+            properties = properties
+                .OrderBy(p => p.IsSold ? 1 : 0)
+                .ThenByDescending(p => p.CreatedAt);
 
             int totalItems = properties.Count();
 
@@ -59,7 +67,107 @@
             if (property == null)
                 return NotFound();
 
+            // Hide unapproved listings from public users
+            if (!property.IsApproved && !(User.IsInRole("Admin") || (User.IsInRole("Agent") && property.AgentId == _userManager.GetUserId(User))))
+                return NotFound();
+
+            // If sold, only Admin / Agent owner / Buyer can view details
+            if (string.Equals(property.Status, "Sold", StringComparison.OrdinalIgnoreCase))
+            {
+                var currentUserId = _userManager.GetUserId(User);
+                var canSeeSold =
+                    User.IsInRole("Admin") ||
+                    (User.IsInRole("Agent") && property.AgentId == currentUserId) ||
+                    (!string.IsNullOrEmpty(property.BuyerId) && property.BuyerId == currentUserId);
+
+                if (!canSeeSold)
+                    return NotFound();
+            }
+
             return View(property);
+        }
+
+        // Buy (POST) → Customer buys property, it disappears from public catalog
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> Buy(int id)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+                return RedirectToAction("Login", "Account");
+
+            var property = await _propertyRepo.GetByIdAsync(id);
+            if (property == null)
+                return NotFound();
+
+            if (!property.IsApproved)
+                return Forbid();
+
+            if (!string.Equals(property.Status, "Available", StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["Error"] = "This property is no longer available.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            property.Status = "Sold";
+            property.IsSold = true;
+            property.BuyerId = currentUser.Id;
+            property.SoldAt = DateTime.UtcNow;
+
+            _propertyRepo.Update(property);
+            await _propertyRepo.SaveChangesAsync();
+
+            TempData["Success"] = "Purchase completed. This property is now marked as Sold.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        // BuyApi (POST) → API endpoint for buying properties with JSON response
+        [HttpPost]
+        [Authorize(Roles = "Customer")]
+        [Route("api/property/buy/{id}")]
+        public async Task<IActionResult> BuyApi(int id)
+        {
+            try
+            {
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null)
+                    return Unauthorized(new { success = false, message = "User not authenticated" });
+
+                var property = await _propertyRepo.GetByIdAsync(id);
+                if (property == null)
+                    return NotFound(new { success = false, message = "Property not found" });
+
+                if (!property.IsApproved)
+                    return BadRequest(new { success = false, message = "This property has not been approved yet" });
+
+                // Prevent buying already sold property
+                if (property.IsSold || !string.Equals(property.Status, "Available", StringComparison.OrdinalIgnoreCase))
+                    return BadRequest(new { success = false, message = "This property is no longer available for purchase" });
+
+                // Update property
+                property.Status = "Sold";
+                property.IsSold = true;
+                property.BuyerId = currentUser.Id;
+                property.SoldAt = DateTime.UtcNow;
+
+                _propertyRepo.Update(property);
+                await _propertyRepo.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Purchase completed successfully!",
+                    propertyId = property.Id,
+                    propertyTitle = property.Title,
+                    price = property.Price,
+                    soldAt = property.SoldAt
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "An error occurred: " + ex.Message });
+            }
         }
         // Create (GET)
         [HttpGet]
@@ -250,7 +358,8 @@
             int pageSize = 6;
             var user = await _userManager.GetUserAsync(User);
 
-            var properties = await _propertyRepo.FindAsync(p => p.AgentId == user.Id);
+            var allMine = await _propertyRepo.GetAllAsync(p => p.Images);
+            var properties = allMine.Where(p => p.AgentId == user.Id);
 
             if (!string.IsNullOrEmpty(search))
                 properties = properties.Where(p => p.Title.Contains(search, StringComparison.OrdinalIgnoreCase));
@@ -270,6 +379,38 @@
                 Properties = data,
                 Search = search,
                 City = city,
+                PageNumber = page,
+                TotalPages = (int)Math.Ceiling((double)totalItems / pageSize)
+            };
+
+            return View(vm);
+        }
+
+        // MyPurchases (GET) → Show customer's bought properties
+        [HttpGet]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> MyPurchases(int page = 1)
+        {
+            int pageSize = 6;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToAction("Login", "Account");
+
+            var all = await _propertyRepo.GetAllAsync(p => p.Images);
+            var mine = all
+                .Where(p => p.BuyerId == user.Id)
+                .OrderByDescending(p => p.SoldAt ?? p.UpdatedAt ?? p.CreatedAt)
+                .ToList();
+
+            int totalItems = mine.Count;
+            var data = mine
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var vm = new PropertyListViewModel
+            {
+                Properties = data,
                 PageNumber = page,
                 TotalPages = (int)Math.Ceiling((double)totalItems / pageSize)
             };

@@ -31,6 +31,10 @@ namespace RealState_Platform.Controllers
             {
                 return Json(new { success = false, message = "Property not found" });
             }
+            if (!property.IsApproved || !string.Equals(property.Status, "Available", StringComparison.OrdinalIgnoreCase))
+            {
+                return Json(new { success = false, message = "This property is not available." });
+            }
             ApplicationUser currentUser = null;
             var userId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (!string.IsNullOrEmpty(userId))

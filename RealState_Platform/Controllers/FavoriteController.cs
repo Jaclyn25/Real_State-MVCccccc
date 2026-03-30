@@ -27,6 +27,8 @@ namespace RealState_Platform.Controllers
             var property = await _propertyRepo.GetByIdAsync(propertyId);
             if (property == null)
                 return Json(new { success = false, message = "Property not found" });
+            if (!property.IsApproved || !string.Equals(property.Status, "Available", StringComparison.OrdinalIgnoreCase))
+                return Json(new { success = false, message = "This property is not available." });
             var favorites = await _favoriteRepo.GetAllAsync();
             var existing = favorites.FirstOrDefault(f => 
                 f.UserId == currentUser.Id && f.PropertyId == propertyId && !f.IsDeleted);
