@@ -1,0 +1,307 @@
+<!-- 
+    Example HTML Integration for Property Buy Feature
+    Add this to your Property/Details.cshtml view
+    Make sure to include the shopping-cart.js file in your layout
+-->
+
+@{
+    ViewData["Title"] = "Property Details";
+}
+
+<!-- Include the shopping cart script in your _Layout.cshtml -->
+<!-- <script src="~/js/shopping-cart.js"></script> -->
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Property Images -->
+        <div class="col-md-6">
+            <div id="propertyCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @foreach (var image in Model.Images)
+                    {
+                        <div class="carousel-item @(Model.Images.FirstOrDefault() == image ? "active" : "")">
+                            <img src="@image.ImageUrl" class="d-block w-100" alt="Property Image">
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Property Details & Buy Section -->
+        <div class="col-md-6">
+            <h1>@Model.Title</h1>
+            <p class="text-muted">@Model.Address, @Model.City, @Model.State</p>
+
+            <h2 class="text-primary mb-3">${@Model.Price.ToString("N0")}</h2>
+
+            <!-- Property Details -->
+            <div class="property-details mb-4">
+                <div class="row mb-2">
+                    <div class="col-4">
+                        <strong>Property Type:</strong>
+                    </div>
+                    <div class="col-8">@Model.PropertyType</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-4">
+                        <strong>Bedrooms:</strong>
+                    </div>
+                    <div class="col-8">@Model.Bedrooms</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-4">
+                        <strong>Bathrooms:</strong>
+                    </div>
+                    <div class="col-8">@Model.Bathrooms</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-4">
+                        <strong>Area:</strong>
+                    </div>
+                    <div class="col-8">@Model.Area sq ft</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-4">
+                        <strong>Status:</strong>
+                    </div>
+                    <div class="col-8">
+                        <span class="badge bg-@(Model.IsSold ? "danger" : "success")">
+                            @Model.Status
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-4">
+                <h5>Description</h5>
+                <p>@Model.Description</p>
+            </div>
+
+            <!-- Features -->
+            <div class="mb-4">
+                <h5>Features</h5>
+                <ul class="list-group">
+                    @if (Model.HasGarage)
+                    {
+                        <li class="list-group-item">✓ Garage</li>
+                    }
+                    @if (Model.HasGarden)
+                    {
+                        <li class="list-group-item">✓ Garden</li>
+                    }
+                    @if (Model.HasPool)
+                    {
+                        <li class="list-group-item">✓ Swimming Pool</li>
+                    }
+                    @if (Model.IsFurnished)
+                    {
+                        <li class="list-group-item">✓ Furnished</li>
+                    }
+                </ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-grid gap-2 mb-4">
+                @if (!Model.IsSold && User.IsInRole("Customer"))
+                {
+                    <button type="button" class="btn btn-primary btn-lg" id="addToCartBtn" 
+                            onclick="addToCart(@Model.Id, '@Model.Title', @Model.Price)">
+                        Add to Cart
+                    </button>
+                    
+                    <button type="button" class="btn btn-success btn-lg" id="buyNowBtn"
+                            onclick="buyProperty(@Model.Id, this)">
+                        Buy Now
+                    </button>
+                }
+                else if (!Model.IsSold)
+                {
+                    <button type="button" class="btn btn-warning btn-lg disabled">
+                        Please Login to Purchase
+                    </button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-secondary btn-lg disabled">
+                        Sold
+                    </button>
+                }
+            </div>
+
+            <!-- Share Property -->
+            <div class="mb-4">
+                <button class="btn btn-outline-primary btn-sm" onclick="shareProperty('@Model.Id', '@Model.Title')">
+                    <i class="fas fa-share"></i> Share
+                </button>
+                <button class="btn btn-outline-danger btn-sm" onclick="toggleFavorite('@Model.Id')">
+                    <i class="far fa-heart"></i> Add to Favorites
+                </button>
+            </div>
+
+            <!-- Agent Info -->
+            @if (Model.Agent != null)
+            {
+                <div class="alert alert-light">
+                    <h6>Listed by</h6>
+                    <p><strong>@Model.Agent.FullName</strong></p>
+                    <p>@Model.Agent.PhoneNumber</p>
+                    <p>@Model.Agent.Email</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Tabs for more information -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#comments">Comments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#inquiries">Make an Inquiry</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Comments Section -->
+                <div id="comments" class="tab-pane fade show active p-3">
+                    <h5>Customer Reviews</h5>
+                    <div id="commentsContainer">
+                        <!-- Comments will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Inquiry Section -->
+                <div id="inquiries" class="tab-pane fade p-3">
+                    <h5>Send an Inquiry</h5>
+                    <form id="inquiryForm">
+                        <div class="mb-3">
+                            <textarea class="form-control" placeholder="Your message..." rows="4"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Inquiry</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Shopping Cart Display Modal -->
+<div class="modal fade" id="cartModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Shopping Cart</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="cartItems">
+                    <!-- Cart items will be displayed here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" onclick="propertyCart.clearCart(); updateCartUI(); showNotification('Cart cleared', 'info')">
+                    Clear Cart
+                </button>
+                <button type="button" class="btn btn-success" onclick="buyAllInCart(this)">
+                    Confirm Purchase
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Styles -->
+<style>
+    .property-details {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+    .carousel {
+        background-color: #e9ecef;
+        border-radius: 5px;
+    }
+
+    #cartBadge {
+        display: none;
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+    }
+</style>
+
+<!-- JavaScript Functions -->
+<script>
+    function shareProperty(propertyId, propertyTitle) {
+        const url = window.location.href;
+        const text = `Check out this property: ${propertyTitle}`;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: propertyTitle,
+                text: text,
+                url: url
+            });
+        } else {
+            alert('Share URL: ' + url);
+        }
+    }
+
+    function toggleFavorite(propertyId) {
+        // Implement favorite toggle logic here
+        addToFavorites(propertyId);
+    }
+
+    function addToFavorites(propertyId) {
+        fetch(`/api/favorite/add/${propertyId}`, {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Added to favorites!', 'success');
+            }
+        })
+        .catch(e => showNotification('Error adding to favorites', 'error'));
+    }
+
+    // Open cart modal
+    function openCart() {
+        const modal = new bootstrap.Modal(document.getElementById('cartModal'));
+        updateCartUI();
+        modal.show();
+    }
+
+    // Add cart icon to navbar (call this in your layout)
+    function initCartButton() {
+        const cartBtn = document.getElementById('cartBtn');
+        if (cartBtn) {
+            cartBtn.addEventListener('click', openCart);
+        }
+        updateCartUI();
+    }
+
+    document.addEventListener('DOMContentLoaded', initCartButton);
+</script>
