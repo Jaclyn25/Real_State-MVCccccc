@@ -1,4 +1,4 @@
-﻿namespace RealState_Platform.Models
+namespace RealState_Platform.Models
 {
     public class Property : BaseEntity
     {
@@ -16,6 +16,7 @@
         public double Area { get; set; } // Square Feet
         public string Status { get; set; } // Available, Pending, Sold, Rented
         public bool IsApproved { get; set; } = false;
+        public bool IsSold { get; set; } = false;
 
 
         // Features
@@ -29,9 +30,12 @@
 
         // Foreign Keys
         public string AgentId { get; set; } // Identity User Id is string
+        public string? BuyerId { get; set; } // Set when customer buys
+        public DateTime? SoldAt { get; set; }
 
         // Navigation Properties
         public virtual ApplicationUser Agent { get; set; }
+        public virtual ApplicationUser? Buyer { get; set; }
         public virtual ICollection<PropertyImage> Images { get; set; }
         public virtual ICollection<Inquiry> Inquiries { get; set; }
         public virtual ICollection<Favorite> Favorites { get; set; }
