@@ -1,0 +1,82 @@
+@model PropertyListViewModel
+
+@{
+    ViewData["Title"] = "My purchases";
+    var placeholderImg = "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80";
+}
+
+<div class="property-page">
+    <section class="property-page-hero">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item active text-white-50" aria-current="page">My purchases</li>
+                </ol>
+            </nav>
+            <h1 class="mb-1">My purchases</h1>
+            <p class="text-white-50 mb-0 small">Properties you bought are saved here.</p>
+        </div>
+    </section>
+
+    <div class="container pb-5">
+        @if (Model?.Properties != null && Model.Properties.Any())
+        {
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mt-2">
+                @foreach (var item in Model.Properties)
+                {
+                    var img = item.Images != null && item.Images.Any()
+                        ? item.Images.First().ImageUrl
+                        : placeholderImg;
+                    <div class="col d-flex">
+                        <div class="card prop-card w-100">
+                            <div class="prop-card-img-wrap">
+                                <img src="@img" alt="@item.Title" loading="lazy" />
+                                <div class="prop-badge-row">
+                                    <span class="badge-pill badge-type">Purchased</span>
+                                    <span class="badge-pill badge-sale">Sold</span>
+                                </div>
+                            </div>
+                            <div class="prop-card-body">
+                                <p class="prop-price mb-1">@item.Price.ToString("C0")</p>
+                                <h2 class="prop-title mb-2">@item.Title</h2>
+                                <p class="prop-meta mb-3">
+                                    <i class="bi bi-geo-alt me-1"></i>@item.City
+                                </p>
+                                <div class="mt-auto d-grid">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-details">
+                                        View details <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @if (Model.TotalPages > 1)
+            {
+                <nav class="mt-5 d-flex justify-content-center" aria-label="Purchases pages">
+                    <ul class="pagination prop-pagination mb-0 flex-wrap justify-content-center">
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" asp-action="MyPurchases" asp-route-page="@i">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        }
+        else
+        {
+            <div class="prop-empty mt-4">
+                <i class="bi bi-bag-x display-4 text-muted mb-3 d-block"></i>
+                <h2 class="h5 fw-bold mb-2">No purchases yet</h2>
+                <p class="text-muted small mb-4">Browse properties and buy when you’re ready.</p>
+                <a asp-controller="Property" asp-action="Index" class="btn btn-primary rounded-3 px-4">Browse properties</a>
+            </div>
+        }
+    </div>
+</div>
+

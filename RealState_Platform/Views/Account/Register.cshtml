@@ -1,72 +1,102 @@
-﻿@model RegisterViewModel
+@model RealState_Platform.ViewModel.RegisterViewModel
 
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Sign Up";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Create New Account</h4>
+<div class="auth-page">
+    <div class="container">
+        <div class="row g-0 justify-content-center shadow-lg rounded-4 overflow-hidden auth-card" style="max-width: 1040px; margin-left: auto; margin-right: auto;">
+            <div class="col-lg-5 d-none d-lg-flex auth-visual">
+                <div class="auth-visual-inner mt-auto">
+                    <h2>Join RealHome</h2>
+                    <p class="text-white-50 mb-0 small">
+                        Create an account to save listings, message agents, and list properties as a professional.
+                    </p>
                 </div>
-                <div class="card-body">
+            </div>
+            <div class="col-lg-7 bg-white">
+                <div class="p-4 p-md-5">
+                    <div class="text-center text-lg-start mb-4">
+                        <div class="auth-icon-wrap mb-3"><i class="bi bi-person-plus"></i></div>
+                        <h1 class="h3 fw-bold mb-1">Create your account</h1>
+                        <p class="text-muted mb-0 small">It only takes a minute to get started.</p>
+                    </div>
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3 mb-3 py-2 small"></div>
+
                     <form asp-action="Register" method="post">
-                        <div asp-validation-summary="All" class="text-danger"></div>
+                        @Html.AntiForgeryToken()
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="FirstName" class="form-label"></label>
-                                <input asp-for="FirstName" class="form-control" />
-                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="FirstName" class="form-control rounded-3" placeholder="First name" autocomplete="given-name" />
+                                    <label asp-for="FirstName">First name</label>
+                                    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="LastName" class="form-label"></label>
-                                <input asp-for="LastName" class="form-control" />
-                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="LastName" class="form-control rounded-3" placeholder="Last name" autocomplete="family-name" />
+                                    <label asp-for="LastName">Last name</label>
+                                    <span asp-validation-for="LastName" class="text-danger small"></span>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Email" class="form-label"></label>
-                            <input asp-for="Email" class="form-control" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" class="form-control rounded-3" placeholder="name@example.com" autocomplete="email" />
+                            <label asp-for="Email">Email address</label>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="PhoneNumber" class="form-label"></label>
-                            <input asp-for="PhoneNumber" class="form-control" />
-                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        <div class="form-floating mb-3">
+                            <input asp-for="PhoneNumber" class="form-control rounded-3" placeholder="Phone" autocomplete="tel" />
+                            <label asp-for="PhoneNumber">Phone number</label>
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Password" class="form-label"></label>
-                            <input asp-for="Password" class="form-control" />
-                            <span asp-validation-for="Password" class="text-danger"></span>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="Password" class="form-control rounded-3" type="password" autocomplete="new-password" placeholder="Password" />
+                                    <label asp-for="Password">Password</label>
+                                    <span asp-validation-for="Password" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="ConfirmPassword" class="form-control rounded-3" type="password" autocomplete="new-password" placeholder="Confirm" />
+                                    <label asp-for="ConfirmPassword">Confirm password</label>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="ConfirmPassword" class="form-label"></label>
-                            <input asp-for="ConfirmPassword" class="form-control" />
-                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Role" class="form-label"></label>
-                            <select asp-for="Role" class="form-select">
-                                <option value="">Select Role</option>
-                                <option value="Customer">Customer (Looking to buy/rent)</option>
-                                <option value="Agent">Agent (Want to list properties)</option>
+                        <div class="form-floating mb-4">
+                            <select asp-for="Role" class="form-select rounded-3">
+                                <option value="">Choose account type</option>
+                                <option value="Customer">Customer — buy or rent</option>
+                                <option value="Agent">Agent — list properties</option>
                             </select>
-                            <span asp-validation-for="Role" class="text-danger"></span>
+                            <label asp-for="Role">I am a…</label>
+                            <span asp-validation-for="Role" class="text-danger small"></span>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-3 fw-semibold py-3">
+                                Create account
+                            </button>
+                        </div>
+
+                        <div class="auth-divider"></div>
+
+                        <p class="text-center text-muted small mb-0">
+                            Already have an account?
+                            <a asp-action="Login" class="fw-semibold text-decoration-none">Log in</a>
+                        </p>
                     </form>
-                </div>
-                <div class="card-footer text-center">
-                    <p class="mb-0">Already have an account? <a asp-action="Login">Login here</a></p>
                 </div>
             </div>
         </div>
@@ -74,7 +104,5 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }

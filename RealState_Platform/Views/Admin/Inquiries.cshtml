@@ -1,0 +1,105 @@
+@model IEnumerable<Inquiry>
+
+@{
+    ViewData["Title"] = "Inquiries";
+    var list = Model?.ToList() ?? new List<Inquiry>();
+    var pageNumber = (int?)ViewBag.PageNumber ?? 1;
+    var totalPages = (int?)ViewBag.TotalPages ?? 1;
+    var totalInquiries = (int?)ViewBag.TotalInquiries ?? list.Count;
+}
+
+<div class="admin-page py-4">
+    <div class="container-fluid px-3 px-lg-4">
+        <div class="row g-4 admin-shell">
+            <div class="col-lg-3 col-xl-2">
+                @await Html.PartialAsync("_AdminNav")
+            </div>
+            <div class="col-lg-9 col-xl-10 admin-content">
+                <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+                    <div>
+                        <h1 class="admin-page-title h2 mb-1">Inquiries</h1>
+                        <p class="text-muted small mb-0">All customer inquiries across the platform.</p>
+                    </div>
+                    <span class="badge bg-info-subtle text-info border border-info-subtle align-self-start">Total: @totalInquiries</span>
+                </div>
+
+                @if (list.Any())
+                {
+                    <div class="admin-table-wrap">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Property</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Agent</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var i in list)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="fw-semibold">@i.CustomerName</div>
+                                            <div class="small text-muted">@i.CustomerEmail</div>
+                                            <div class="small text-muted">@i.CustomerPhone</div>
+                                        </td>
+                                        <td style="max-width: 420px;">
+                                            <a asp-controller="Property" asp-action="Details" asp-route-id="@i.PropertyId" class="text-decoration-none fw-semibold">
+                                                @(i.Property?.Title ?? "Property")
+                                            </a>
+                                            <div class="small text-muted">@((i.Property?.City ?? "") + " · " + (i.Property?.ListingType ?? ""))</div>
+                                            <div class="small text-muted text-truncate" style="max-width: 420px;">@i.Message</div>
+                                        </td>
+                                        <td>
+                                            @if (string.Equals(i.Status, "New", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <span class="badge bg-warning text-dark">New</span>
+                                            }
+                                            else if (string.Equals(i.Status, "Read", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <span class="badge bg-info">Read</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">@i.Status</span>
+                                            }
+                                        </td>
+                                        <td class="small text-muted">@i.CreatedAt.ToLocalTime().ToString("g")</td>
+                                        <td>
+                                            <div class="fw-semibold">@((i.Property?.Agent?.FirstName ?? "") + " " + (i.Property?.Agent?.LastName ?? ""))</div>
+                                            <div class="small text-muted">@i.Property?.Agent?.Email</div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if (totalPages > 1)
+                    {
+                        <nav class="mt-4 d-flex justify-content-center" aria-label="Admin inquiries pages">
+                            <ul class="pagination prop-pagination mb-0 flex-wrap justify-content-center">
+                                @for (int p = 1; p <= totalPages; p++)
+                                {
+                                    <li class="page-item @(p == pageNumber ? "active" : "")">
+                                        <a class="page-link" asp-action="Inquiries" asp-route-page="@p">@p</a>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
+                    }
+                }
+                else
+                {
+                    <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+                        <i class="bi bi-envelope-open display-4 text-muted mb-3 d-block"></i>
+                        <h2 class="h5 fw-bold mb-2">No inquiries yet</h2>
+                        <p class="text-muted small mb-0">When customers send inquiries, they will appear here.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

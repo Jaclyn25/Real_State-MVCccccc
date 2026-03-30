@@ -22,6 +22,15 @@
                     <input type="hidden" id="propertyIdInput" name="propertyId" value="@propertyId" />
                     <input type="hidden" name="parentCommentId" value="" />
 
+                    <!-- Display current user name -->
+                    <div class="alert alert-info py-2 mb-3">
+                        <small>
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Posting as:</strong> 
+                            <span id="authorName">@User.Identity?.Name</span>
+                        </small>
+                    </div>
+
                     <div class="form-group mb-3">
                         <textarea class="form-control" id="commentContent" name="content" placeholder="Add your comment..." rows="3" required maxlength="1000"></textarea>
                         <small class="form-text text-muted"><span id="charCount">0</span>/1000 characters</small>
@@ -30,8 +39,9 @@
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" id="postAsAnonymous" name="isAnonymous">
                         <label class="form-check-label" for="postAsAnonymous">
-                            Post as Anonymous
+                            <i class="bi bi-incognito"></i> Post as Anonymous instead
                         </label>
+                        <small class="d-block text-muted mt-1">Your comment will be displayed as "Anonymous" if checked</small>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-sm">
@@ -209,7 +219,7 @@
                         <div>
                             <h6 class="card-subtitle mb-1">
                                 <strong>${escapeHtml(comment.userName)}</strong>
-                                <small class="text-muted">${comment.userEmail}</small>
+                                ${comment.isAnonymous ? '<span class="badge bg-secondary ms-2">Anonymous</span>' : ''}
                             </h6>
                             <small class="text-muted">${formatDate(comment.createdAt)}</small>
                         </div>
@@ -225,7 +235,14 @@
 
     // Delete Comment
     async function deleteComment(commentId) {
-        if (!confirm("Are you sure you want to delete this comment?")) return;
+        // Show professional Bootstrap modal confirmation
+        const confirmDelete = await showConfirmationModalDelete(
+            "Delete Comment",
+            "Are you sure you want to delete this comment? This action cannot be undone.",
+            "Delete",
+            "Cancel"
+        );
+        if (!confirmDelete) return;
 
         try {
             const token = document.querySelector('[name="__RequestVerificationToken"]').value;
@@ -266,10 +283,21 @@
         }
     }
 
-    // Edit Comment (basic implementation)
+    // Edit Comment with Modal
     async function editComment(commentId) {
-        const newContent = prompt("Edit your comment:");
-        if (!newContent || newContent.trim() === '') return;
+        // Get current comment content
+        const commentElement = document.getElementById(`comment-${commentId}`);
+        const currentContent = commentElement.querySelector('.card-text').textContent.trim();
+
+        // Show edit modal
+        const newContent = await showEditModalComment(
+            "Edit Comment",
+            "Update your comment:",
+            currentContent,
+            "Save Changes",
+            "Cancel"
+        );
+        if (!newContent) return;
 
         try {
             const token = document.querySelector('[name="__RequestVerificationToken"]').value;
@@ -311,6 +339,25 @@
         }
     }
 
+    // Update author display based on anonymous checkbox
+    const postAsAnonymousCheckbox = document.getElementById('postAsAnonymous');
+    const realUsername = '@User.Identity?.Name';
+    
+    if (postAsAnonymousCheckbox) {
+        postAsAnonymousCheckbox.addEventListener('change', function() {
+            const authorNameSpan = document.getElementById('authorName');
+            if (this.checked) {
+                authorNameSpan.textContent = 'Anonymous';
+                authorNameSpan.style.fontStyle = 'italic';
+                authorNameSpan.style.color = '#999';
+            } else {
+                authorNameSpan.textContent = realUsername;
+                authorNameSpan.style.fontStyle = 'normal';
+                authorNameSpan.style.color = 'inherit';
+            }
+        });
+    }
+
     // Submit Comment Form
     document.getElementById('commentForm').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -338,18 +385,14 @@
         try {
             const token = document.querySelector('[name="__RequestVerificationToken"]')?.value;
             console.log("- token:", token ? "present" : "missing");
+            console.log("- sending isAnonymous as:", isAnonymous);
 
+            // Build FormData with proper body
             const formData = new FormData();
             formData.append('propertyId', propertyId);
             formData.append('content', content);
             formData.append('isAnonymous', isAnonymous);
             formData.append('__RequestVerificationToken', token);
-
-            // Log form data
-            console.log("FormData entries:");
-            for (let [key, value] of formData.entries()) {
-                console.log(`  ${key}: ${value}`);
-            }
 
             const response = await fetch('@Url.Action("AddComment", "Comment")', {
                 method: 'POST',
@@ -424,6 +467,137 @@
             </div>
         `;
         setTimeout(() => alertDiv.innerHTML = '', 5000);
+    }
+
+    // Professional Delete Confirmation Modal
+    function showConfirmationModalDelete(title, message, confirmText, cancelText) {
+        return new Promise((resolve) => {
+            // Create modal HTML
+            const modalHtml = `
+                <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-danger">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title" id="deleteConfirmLabel">
+                                    <i class="bi bi-exclamation-triangle"></i> ${title}
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>${message}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${cancelText}</button>
+                                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                                    <i class="bi bi-trash"></i> ${confirmText}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modalElement = document.getElementById('deleteConfirmModal');
+            const modal = new bootstrap.Modal(modalElement);
+            
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+                modal.hide();
+                modalElement.remove();
+                resolve(true);
+            });
+            
+            modalElement.addEventListener('hidden.bs.modal', function() {
+                if (modalElement.parentElement) {
+                    modalElement.remove();
+                }
+                resolve(false);
+            });
+            
+            modal.show();
+        });
+    }
+
+    // Professional Edit Modal with Textarea
+    function showEditModalComment(title, label, currentContent, confirmText, cancelText) {
+        return new Promise((resolve) => {
+            // Generate unique ID for this edit modal
+            const editModalId = 'editCommentModal_' + Date.now();
+            const editTextareaId = 'editContent_' + Date.now();
+            const editCharCountId = 'editCharCount_' + Date.now();
+
+            // Create modal HTML with textarea
+            const modalHtml = `
+                <div class="modal fade" id="${editModalId}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-primary">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title" id="editModalLabel">
+                                    <i class="bi bi-pencil-square"></i> ${title}
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <label for="${editTextareaId}" class="form-label"><strong>${label}</strong></label>
+                                <textarea 
+                                    class="form-control" 
+                                    id="${editTextareaId}" 
+                                    rows="4" 
+                                    maxlength="1000"
+                                    style="resize: vertical;"
+                                >${currentContent}</textarea>
+                                <small class="form-text text-muted d-block mt-2">
+                                    <span id="${editCharCountId}">${currentContent.length}</span>/1000 characters
+                                </small>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${cancelText}</button>
+                                <button type="button" class="btn btn-primary" id="confirmEditBtn">
+                                    <i class="bi bi-check-lg"></i> ${confirmText}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modalElement = document.getElementById(editModalId);
+            const modal = new bootstrap.Modal(modalElement);
+            const textarea = document.getElementById(editTextareaId);
+
+            // Character counter for edit textarea
+            textarea.addEventListener('input', function() {
+                document.getElementById(editCharCountId).textContent = this.value.length;
+            });
+
+            // Handle confirm button
+            document.getElementById('confirmEditBtn').addEventListener('click', function() {
+                const newContent = textarea.value.trim();
+                if (!newContent) {
+                    showNotification("warning", "Comment cannot be empty");
+                    return;
+                }
+                if (newContent.length > 1000) {
+                    showNotification("warning", "Comment is too long (max 1000 characters)");
+                    return;
+                }
+                modal.hide();
+                modalElement.remove();
+                resolve(newContent);
+            });
+
+            // Handle modal close
+            modalElement.addEventListener('hidden.bs.modal', function() {
+                if (modalElement.parentElement) {
+                    modalElement.remove();
+                }
+                resolve(null);
+            });
+
+            modal.show();
+            // Focus textarea automatically
+            textarea.focus();
+            textarea.select();
+        });
     }
 
     // Initialize on page load

@@ -1,108 +1,240 @@
-﻿@model Property
+@model Property
 
 @inject UserManager<ApplicationUser> UserManager
 
 @{
-    ViewData["Title"] = "Property Details";
+    ViewData["Title"] = Model.Title;
     var currentUser = await UserManager.GetUserAsync(User);
+    var placeholderImg = "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=80";
+    var images = Model.Images?.ToList() ?? new List<PropertyImage>();
+    var hasImages = images.Any();
+    var isAvailable = string.Equals(Model.Status, "Available", StringComparison.OrdinalIgnoreCase);
+    var isSold = string.Equals(Model.Status, "Sold", StringComparison.OrdinalIgnoreCase);
 }
 
-<!-- CSRF Token for AJAX requests -->
 @Html.AntiForgeryToken()
 
-<div class="row mb-4">
-    <div class="col">
-        <h2 class="text-primary">@Model.Title</h2>
-    </div>
-    <div class="col-auto">
-        @if (currentUser != null)
+<div class="property-page">
+    <section class="property-detail-hero">
+        @if (hasImages)
         {
-            <button class="btn btn-outline-danger add-to-favorite-btn" 
-                    data-property-id="@Model.Id"
-                    title="Add to favorites">
-                <i class="bi bi-heart"></i> Add to Favorites
-            </button>
-            <button class="btn btn-primary" 
-                    data-bs-toggle="modal" data-bs-target="#inquiryModal" 
-                    data-property-id="@Model.Id">
-                <i class="bi bi-envelope"></i> Send Inquiry
-            </button>
+            if (images.Count == 1)
+            {
+                <img src="@images[0].ImageUrl" class="w-100 d-block" alt="@Model.Title" style="max-height: 520px; object-fit: cover;" />
+            }
+            else
+            {
+                <div id="propertyCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        @for (var i = 0; i < images.Count; i++)
+                        {
+                            <button type="button" data-bs-target="#propertyCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="Slide @(i + 1)"></button>
+                        }
+                    </div>
+                    <div class="carousel-inner">
+                        @for (var i = 0; i < images.Count; i++)
+                        {
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <img src="@images[i].ImageUrl" class="d-block w-100" alt="@Model.Title — photo @(i + 1)" />
+                            </div>
+                        }
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            }
         }
         else
         {
-            <a asp-controller="Account" asp-action="Login" class="btn btn-primary">
-                <i class="bi bi-box-arrow-in-right"></i> Login to Contact
-            </a>
+            <img src="@placeholderImg" class="w-100 d-block opacity-75" alt="" style="max-height: 420px; object-fit: cover;" />
         }
-    </div>
-</div>
+    </section>
 
-<!-- Property Info -->
-<div class="card shadow-sm mb-4 p-4">
-    <h5 class="mb-3 text-secondary">Property Information</h5>
-    <p><strong>Price:</strong> @Model.Price</p>
-    <p><strong>City:</strong> @Model.City</p>
-    <p><strong>Description:</strong> @Model.Description</p>
-    <p><strong>Bedrooms:</strong> @Model.Bedrooms</p>
-    <p><strong>Bathrooms:</strong> @Model.Bathrooms</p>
-</div>
+    <div class="container property-detail-bar pb-5">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card property-detail-summary p-4 p-md-4 mb-4">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                        <div>
+                            <span class="badge rounded-pill @(string.Equals(Model.ListingType, "Rent", StringComparison.OrdinalIgnoreCase) ? "bg-primary" : "bg-dark") mb-2">@Model.ListingType</span>
+                            @if (isSold)
+                            {
+                                <span class="badge rounded-pill bg-danger mb-2 ms-1">
+                                    <i class="bi bi-check-circle me-1"></i> SOLD
+                                </span>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.PropertyType))
+                            {
+                                <span class="badge rounded-pill bg-light text-dark border mb-2 ms-1">@Model.PropertyType</span>
+                            }
+                            <h1 class="h3 font-heading mb-2">@Model.Title</h1>
+                            <p class="text-muted mb-0 small">
+                                <i class="bi bi-geo-alt-fill me-1"></i>@Model.Address, @Model.City, @Model.State @Model.ZipCode
+                            </p>
+                        </div>
+                        <div class="text-lg-end">
+                            <p class="price-tag mb-0">@Model.Price.ToString("C0")</p>
+                            @if (string.Equals(Model.ListingType, "Rent", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <span class="text-muted small">per month</span>
+                            }
+                        </div>
+                    </div>
 
-<!-- Images -->
-@if (Model.Images != null && Model.Images.Any())
-{
-    <div class="card shadow-sm mb-4 p-4">
-        <h5 class="mb-3 text-secondary">Property Images</h5>
-        <div class="d-flex flex-wrap gap-3">
-            @foreach (var img in Model.Images)
-            {
-                <img src="@img.ImageUrl" alt="Property Image" class="img-thumbnail" style="max-width:200px;" />
+                    <div class="row g-2 g-md-3 mb-4">
+                        <div class="col-6 col-md-3">
+                            <div class="property-info-tile">
+                                <i class="bi bi-door-open d-block mb-1"></i>
+                                <span class="small text-muted d-block">Bedrooms</span>
+                                <strong>@Model.Bedrooms</strong>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="property-info-tile">
+                                <i class="bi bi-droplet d-block mb-1"></i>
+                                <span class="small text-muted d-block">Bathrooms</span>
+                                <strong>@Model.Bathrooms</strong>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="property-info-tile">
+                                <i class="bi bi-rulers d-block mb-1"></i>
+                                <span class="small text-muted d-block">Area</span>
+                                <strong>@Model.Area.ToString("N0") sq ft</strong>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="property-info-tile">
+                                <i class="bi bi-info-circle d-block mb-1"></i>
+                                <span class="small text-muted d-block">Status</span>
+                                <strong>@Model.Status</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 class="h6 fw-bold text-uppercase text-muted small mb-2">Description</h2>
+                    <p class="text-muted mb-4" style="line-height: 1.7;">@Model.Description</p>
+
+                    <h2 class="h6 fw-bold text-uppercase text-muted small mb-3">Features</h2>
+                    <div class="d-flex flex-wrap gap-2">
+                        @if (Model.HasGarage) { <span class="badge rounded-pill bg-light text-dark border py-2 px-3"><i class="bi bi-car-front me-1"></i> Garage</span> }
+                        @if (Model.HasGarden) { <span class="badge rounded-pill bg-light text-dark border py-2 px-3"><i class="bi bi-flower1 me-1"></i> Garden</span> }
+                        @if (Model.HasPool) { <span class="badge rounded-pill bg-light text-dark border py-2 px-3"><i class="bi bi-water me-1"></i> Pool</span> }
+                        @if (Model.IsFurnished) { <span class="badge rounded-pill bg-light text-dark border py-2 px-3"><i class="bi bi-lamp me-1"></i> Furnished</span> }
+                        @if (!Model.HasGarage && !Model.HasGarden && !Model.HasPool && !Model.IsFurnished)
+                        {
+                            <span class="text-muted small">No extra features listed.</span>
+                        }
+                    </div>
+                </div>
+
+                @if (User.IsInRole("Agent") && Model.Agent != null && User.Identity?.Name == Model.Agent.UserName)
+                {
+                    <form asp-action="Delete" method="post" class="d-inline" onsubmit="return confirm('Delete this listing?');">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-outline-danger rounded-3 mb-4">
+                            <i class="bi bi-trash me-1"></i> Delete listing
+                        </button>
+                    </form>
+                }
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 sticky-lg-top" style="top: 1rem; z-index: 1;">
+                    <h2 class="h6 fw-bold mb-3">Actions</h2>
+                    @if (currentUser != null)
+                    {
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="button" class="btn btn-outline-danger rounded-3 add-to-favorite-btn" data-property-id="@Model.Id">
+                                <i class="bi bi-heart me-2"></i> Add to favorites
+                            </button>
+                            <button type="button" class="btn btn-primary rounded-3" data-bs-toggle="modal" data-bs-target="#inquiryModal" data-property-id="@Model.Id">
+                                <i class="bi bi-envelope me-2"></i> Send inquiry
+                            </button>
+                            @if (User.IsInRole("Customer"))
+                            {
+                                @if (isAvailable)
+                                {
+                                    <div class="d-grid gap-2">
+                                        <button type="button" class="btn btn-primary rounded-3" onclick="addToCart(@Model.Id, '@Model.Title', @Model.Price)">
+                                            <i class="bi bi-cart-plus me-2"></i> Add to Cart
+                                        </button>
+                                        <button type="button" class="btn btn-success rounded-3" id="buyNowBtn" onclick="buyProperty(@Model.Id, this, '@Model.Title')">
+                                            <i class="bi bi-bag-check me-2"></i> Buy Now
+                                        </button>
+                                    </div>
+                                }
+                                else if (isSold)
+                                {
+                                    <div class="d-grid">
+                                        <button type="button" class="btn btn-secondary rounded-3" disabled>
+                                            <i class="bi bi-lock me-2"></i> Sold - Not Available
+                                        </button>
+                                    </div>
+                                    <p class="small text-muted mt-2 text-center mb-0">
+                                        <i class="bi bi-info-circle me-1"></i> This property has been sold. Contact the agent for similar listings.
+                                    </p>
+                                }
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="btn btn-primary w-100 rounded-3 mb-2">
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Log in to contact
+                        </a>
+                        <p class="small text-muted mb-0">Save favorites and message the agent after you sign in.</p>
+                    }
+
+                    @if (Model.Agent != null)
+                    {
+                        <hr class="my-4" />
+                        <h2 class="h6 fw-bold mb-3">Listed by</h2>
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center" style="width:48px;height:48px;">
+                                <i class="bi bi-person-fill fs-5"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold">@Model.Agent.FirstName @Model.Agent.LastName</div>
+                                <div class="small text-muted">Agent</div>
+                            </div>
+                        </div>
+                        <p class="small mb-1"><i class="bi bi-envelope me-2 text-muted"></i><a href="mailto:@Model.Agent.Email">@Model.Agent.Email</a></p>
+                        @if (!string.IsNullOrEmpty(Model.Agent.PhoneNumber))
+                        {
+                            <p class="small mb-0"><i class="bi bi-telephone me-2 text-muted"></i>@Model.Agent.PhoneNumber</p>
+                        }
+                    }
+                </div>
+
+                <a asp-action="Index" class="btn btn-outline-secondary w-100 rounded-3">
+                    <i class="bi bi-arrow-left me-2"></i> Back to all properties
+                </a>
+            </div>
+        </div>
+
+        <div class="mb-5">
+            @{
+                ViewBag.PropertyId = Model.Id;
             }
+            @await Html.PartialAsync("~/Views/Shared/_CommentsSection.cshtml")
         </div>
     </div>
-}
+</div>
 
-<!-- Agent Info -->
-@if (Model.Agent != null)
-{
-    <div class="card shadow-sm mb-4 p-4">
-        <h5 class="mb-3 text-secondary">Agent Info</h5>
-        <p><strong>Name:</strong> @Model.Agent.FirstName @Model.Agent.LastName</p>
-        <p><strong>Email:</strong> <a href="mailto:@Model.Agent.Email">@Model.Agent.Email</a></p>
-        <p><strong>Phone:</strong> @Model.Agent.PhoneNumber</p>
-    </div>
-}
-
-<!-- Delete button only for Agent owner -->
-@if (User.IsInRole("Agent") && User.Identity.Name == Model.Agent.UserName)
-{
-    <form asp-action="Delete" method="post" class="mb-3">
-        <input type="hidden" name="id" value="@Model.Id" />
-        <button type="submit" class="btn btn-danger"
-                onclick="return confirm('Are you sure you want to delete this property?');">
-            Delete Property
-        </button>
-    </form>
-}
-
-<a asp-action="Index" class="btn btn-secondary">Back to Listings</a>
-
-<!-- Include Inquiry Modal -->
 @if (currentUser != null)
 {
     @await Html.PartialAsync("~/Views/Inquiry/_SendInquiryModal.cshtml")
 }
 
-<!-- Include Comments Section -->
-<div class="mb-5">
-    @{
-        ViewBag.PropertyId = Model.Id;
-    }
-    @await Html.PartialAsync("~/Views/Shared/_CommentsSection.cshtml")
-</div>
-
 @section Scripts {
     <script>
-        // Add to Favorites
         document.querySelectorAll('.add-to-favorite-btn').forEach(btn => {
             btn.addEventListener('click', async function(e) {
                 e.preventDefault();
@@ -120,47 +252,40 @@
                     });
 
                     if (!response.ok) {
-                        console.error('HTTP Error:', response.status, response.statusText);
                         const errorText = await response.text();
-                        console.error('Response:', errorText);
-                        showNotification('Failed to add to favorites (HTTP ' + response.status + ')', 'error');
+                        console.error('HTTP Error:', response.status, errorText);
+                        showNotification('Could not update favorites (' + response.status + ')', 'error');
                         return;
                     }
 
                     const text = await response.text();
-                    console.log('Raw response:', text);
-                    
                     const result = JSON.parse(text);
                     if (result.success) {
-                        this.classList.add('btn-danger');
                         this.classList.remove('btn-outline-danger');
-                        this.innerHTML = '<i class="bi bi-heart-fill"></i> In Favorites';
+                        this.classList.add('btn-danger');
+                        this.innerHTML = '<i class="bi bi-heart-fill me-2"></i> In favorites';
                         this.disabled = true;
-                        
-                        // Show toast notification
                         showNotification('Added to favorites!', 'success');
                     } else {
-                        showNotification(result.message || 'Error adding to favorites', 'error');
+                        showNotification(result.message || 'Something went wrong', 'error');
                     }
                 } catch (error) {
-                    console.error('Error:', error);
-                    showNotification('Failed to add to favorites: ' + error.message, 'error');
+                    console.error(error);
+                    showNotification('Failed: ' + error.message, 'error');
                 }
             });
         });
 
         function showNotification(message, type) {
             const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed bottom-0 end-0 m-3`;
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed bottom-0 end-0 m-3 shadow`;
+            alertDiv.style.zIndex = '1080';
             alertDiv.innerHTML = `
                 <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             `;
             document.body.appendChild(alertDiv);
-            
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 3000);
+            setTimeout(() => { alertDiv.remove(); }, 3500);
         }
     </script>
 }

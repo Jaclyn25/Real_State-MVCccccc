@@ -1,141 +1,143 @@
-﻿@model DashboardVM
+@model DashboardVM
 
-@* Include Bootstrap & FontAwesome (if not already in _Layout.cshtml) *@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@{
+    ViewData["Title"] = "Admin dashboard";
+    var approvedCount = Model.TotalProperties - Model.PendingProperties;
+}
 
-<div class="d-flex">
-    <!-- Sidebar -->
-    <nav class="bg-dark text-white vh-100 p-3" style="width: 250px;">
-        <h3 class="text-center mb-4"><i class="fas fa-building"></i> RealEstate</h3>
-        <ul class="nav flex-column">
-            <li class="nav-item mb-2">
-                <a class="nav-link text-white" asp-controller="Admin" asp-action="Dashboard"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link text-white" asp-controller="Admin" asp-action="ManageUsers"><i class="fas fa-users me-2"></i> Users</a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link text-white" asp-controller="Admin" asp-action="ApproveListings"><i class="fas fa-check-circle me-2"></i> Approve Listings</a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link text-white" asp-controller="Property" asp-action="Index"><i class="fas fa-home me-2"></i> Properties</a>
-            </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link text-white" asp-controller="Admin" asp-action="Inquiries"><i class="fas fa-envelope me-2"></i> Inquiries</a>
-            </li>
-        </ul>
-    </nav>
+<div class="admin-page py-4">
+    <div class="container-fluid px-3 px-lg-4">
+        <div class="row g-4 admin-shell">
+            <div class="col-lg-3 col-xl-2">
+                @await Html.PartialAsync("_AdminNav")
+            </div>
+            <div class="col-lg-9 col-xl-10 admin-content">
+                <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+                    <div>
+                        <h1 class="admin-page-title h2 mb-1">Dashboard</h1>
+                        <p class="text-muted small mb-0">Overview of properties, users, and inquiries.</p>
+                    </div>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-3">
+                        <i class="bi bi-house me-1"></i> Site home
+                    </a>
+                </div>
 
-    <!-- Main content -->
-    <div class="flex-grow-1 p-4">
-        <h2 class="mb-4">Admin Dashboard</h2>
-
-        <!-- Cards -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-3">
-                <div class="card text-white bg-primary shadow-sm">
-                    <div class="card-body d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6>Total Properties</h6>
-                            <h3>@Model.TotalProperties</h3>
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card admin-stat-card stat-navy">
+                            <div class="card-body d-flex align-items-center justify-content-between gap-3">
+                                <div>
+                                    <div class="stat-label">Total properties</div>
+                                    <div class="stat-value">@Model.TotalProperties</div>
+                                </div>
+                                <div class="stat-icon"><i class="bi bi-buildings"></i></div>
+                            </div>
                         </div>
-                        <i class="fas fa-building fa-2x"></i>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-dark bg-warning shadow-sm">
-                    <div class="card-body d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6>Pending</h6>
-                            <h3>@Model.PendingProperties</h3>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card admin-stat-card stat-warn">
+                            <div class="card-body d-flex align-items-center justify-content-between gap-3">
+                                <div>
+                                    <div class="stat-label">Pending approval</div>
+                                    <div class="stat-value">@Model.PendingProperties</div>
+                                </div>
+                                <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+                            </div>
                         </div>
-                        <i class="fas fa-hourglass-half fa-2x"></i>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-success shadow-sm">
-                    <div class="card-body d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6>Users</h6>
-                            <h3>@Model.TotalUsers</h3>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card admin-stat-card stat-ok">
+                            <div class="card-body d-flex align-items-center justify-content-between gap-3">
+                                <div>
+                                    <div class="stat-label">Users</div>
+                                    <div class="stat-value">@Model.TotalUsers</div>
+                                </div>
+                                <div class="stat-icon"><i class="bi bi-people"></i></div>
+                            </div>
                         </div>
-                        <i class="fas fa-users fa-2x"></i>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-info shadow-sm">
-                    <div class="card-body d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6>Inquiries</h6>
-                            <h3>@Model.TotalInquiries</h3>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card admin-stat-card stat-teal">
+                            <div class="card-body d-flex align-items-center justify-content-between gap-3">
+                                <div>
+                                    <div class="stat-label">Inquiries</div>
+                                    <div class="stat-value">@Model.TotalInquiries</div>
+                                </div>
+                                <div class="stat-icon"><i class="bi bi-inbox"></i></div>
+                            </div>
                         </div>
-                        <i class="fas fa-envelope fa-2x"></i>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Charts -->
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="card shadow-sm">
-                    <div class="card-header">
-                        Properties Status
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="card admin-panel h-100">
+                            <div class="card-header">Listing approval status</div>
+                            <div class="card-body">
+                                <canvas id="propertyChart" height="220"></canvas>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <canvas id="propertyChart"></canvas>
+                    <div class="col-lg-6">
+                        <div class="card admin-panel h-100">
+                            <div class="card-header">Users &amp; inquiries</div>
+                            <div class="card-body">
+                                <canvas id="userInquiryChart" height="220"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-md-6">
-                <div class="card shadow-sm">
-                    <div class="card-header">
-                        Users & Inquiries
-                    </div>
-                    <div class="card-body">
-                        <canvas id="userInquiryChart"></canvas>
-                    </div>
+                <div class="mt-4 d-flex flex-wrap gap-2">
+                    <a asp-action="ApproveListings" class="btn btn-primary rounded-3"><i class="bi bi-patch-check me-2"></i>Review pending</a>
+                    <a asp-action="ManageUsers" class="btn btn-outline-primary rounded-3"><i class="bi bi-people me-2"></i>Manage users</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    // Example data for charts (replace with real data from ViewModel if needed)
-    const propertyCtx = document.getElementById('propertyChart').getContext('2d');
-    new Chart(propertyCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Approved', 'Pending', 'Sold/Rented'],
-            datasets: [{
-                data: [@Model.TotalProperties - @Model.PendingProperties, @Model.PendingProperties, 0],
-                backgroundColor: ['#0d6efd', '#ffc107', '#198754']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { position: 'bottom' } }
-        }
-    });
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        const navy = '#1a4b8c';
+        const gold = '#c9a84c';
+        const slate = '#64748b';
 
-    const userInquiryCtx = document.getElementById('userInquiryChart').getContext('2d');
-    new Chart(userInquiryCtx, {
-        type: 'bar',
-        data: {
-            labels: ['Users', 'Inquiries'],
-            datasets: [{
-                label: 'Count',
-                data: [@Model.TotalUsers, @Model.TotalInquiries],
-                backgroundColor: ['#198754', '#0dcaf0']
-            }]
-        },
-        options: { responsive: true }
-    });
-</script>
+        new Chart(document.getElementById('propertyChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Approved / live', 'Pending review'],
+                datasets: [{
+                    data: [@approvedCount, @Model.PendingProperties],
+                    backgroundColor: [navy, gold],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+
+        new Chart(document.getElementById('userInquiryChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Users', 'Inquiries'],
+                datasets: [{
+                    label: 'Count',
+                    data: [@Model.TotalUsers, @Model.TotalInquiries],
+                    backgroundColor: [navy, '#0e7490'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
+}

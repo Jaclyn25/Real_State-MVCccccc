@@ -6,6 +6,7 @@
 }
 
 <div class="container mt-4">
+    @Html.AntiForgeryToken()
     <h2 class="mb-4 text-primary">
         <i class="bi bi-inbox"></i> Inquiries Inbox
         <span class="badge bg-info ms-2">@Model.TotalInquiries</span>

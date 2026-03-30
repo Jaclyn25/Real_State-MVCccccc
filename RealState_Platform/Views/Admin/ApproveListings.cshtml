@@ -1,36 +1,74 @@
-﻿@model IEnumerable<Property>
+@model IEnumerable<Property>
 
-<h2>Pending Listings</h2>
+@{
+    ViewData["Title"] = "Approve listings";
+    var list = Model?.ToList() ?? new List<Property>();
+    var placeholderImg = "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80";
+}
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Price</th>
-            <th>City</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
+<div class="admin-page py-4">
+    <div class="container-fluid px-3 px-lg-4">
+        <div class="row g-4 admin-shell">
+            <div class="col-lg-3 col-xl-2">
+                @await Html.PartialAsync("_AdminNav")
+            </div>
+            <div class="col-lg-9 col-xl-10 admin-content">
+                <h1 class="admin-page-title h2 mb-1">Pending listings</h1>
+                <p class="text-muted small mb-4">Approve to publish on the public catalog, or reject to remove the draft.</p>
 
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Title</td>
-                <td>@item.Price</td>
-                <td>@item.City</td>
-                <td>
-                    <form asp-action="Approve" method="post" style="display:inline;">
-                        <input type="hidden" name="id" value="@item.Id" />
-                        <button class="btn btn-success btn-sm">Approve</button>
-                    </form>
-
-                    <form asp-action="Reject" method="post" style="display:inline;">
-                        <input type="hidden" name="id" value="@item.Id" />
-                        <button class="btn btn-danger btn-sm">Reject</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                @if (list.Any())
+                {
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+                        @foreach (var item in list)
+                        {
+                            var img = item.Images != null && item.Images.Any() ? item.Images.First().ImageUrl : placeholderImg;
+                            var agentName = item.Agent != null ? $"{item.Agent.FirstName} {item.Agent.LastName}".Trim() : "—";
+                            <div class="col">
+                                <div class="card admin-pending-card h-100">
+                                    <img src="@img" class="pending-img" alt="" />
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                                            <h2 class="h6 mb-0 font-heading">@item.Title</h2>
+                                            <span class="badge bg-warning text-dark rounded-pill">Pending</span>
+                                        </div>
+                                        <p class="small text-muted mb-2">
+                                            <i class="bi bi-geo-alt me-1"></i>@item.City · @item.PropertyType · @item.ListingType
+                                        </p>
+                                        <p class="fw-bold text-primary mb-2">@item.Price.ToString("C0")</p>
+                                        <p class="small text-muted mb-3">
+                                            <i class="bi bi-person me-1"></i>@agentName
+                                            <span class="d-block small mt-1"><i class="bi bi-calendar3 me-1"></i>@item.CreatedAt.ToLocalTime().ToString("g")</span>
+                                        </p>
+                                        <div class="mt-auto d-flex flex-wrap gap-2">
+                                            <form asp-action="Approve" method="post" class="flex-grow-1">
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <button type="submit" class="btn btn-success w-100 rounded-3 btn-sm">
+                                                    <i class="bi bi-check-lg me-1"></i> Approve
+                                                </button>
+                                            </form>
+                                            <form asp-action="Reject" method="post" class="flex-grow-1" onsubmit="return confirm('Reject and delete this listing?');">
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <button type="submit" class="btn btn-outline-danger w-100 rounded-3 btn-sm">
+                                                    <i class="bi bi-x-lg me-1"></i> Reject
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+                        <i class="bi bi-patch-check display-4 text-success mb-3 d-block"></i>
+                        <h2 class="h5 fw-bold mb-2">All caught up</h2>
+                        <p class="text-muted small mb-0">No listings are waiting for approval.</p>
+                        <a asp-controller="Property" asp-action="Index" class="btn btn-outline-primary rounded-3 mt-3">View properties</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,36 @@
+@{
+    var action = ViewContext.RouteData.Values["Action"]?.ToString() ?? "";
+}
+
+<nav class="admin-sidebar">
+    <div class="admin-brand">
+        <i class="bi bi-shield-check me-2"></i> Admin
+    </div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link @(action == "Dashboard" ? "active" : "")" asp-controller="Admin" asp-action="Dashboard">
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(action == "ManageUsers" ? "active" : "")" asp-controller="Admin" asp-action="ManageUsers">
+                <i class="bi bi-people me-2"></i> Users
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(action == "ApproveListings" ? "active" : "")" asp-controller="Admin" asp-action="ApproveListings">
+                <i class="bi bi-patch-check me-2"></i> Approve listings
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Property" asp-action="Index">
+                <i class="bi bi-grid-1x2 me-2"></i> All properties
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(action == "Inquiries" ? "active" : "")" asp-controller="Admin" asp-action="Inquiries">
+                <i class="bi bi-envelope me-2"></i> Inquiries
+            </a>
+        </li>
+    </ul>
+</nav>

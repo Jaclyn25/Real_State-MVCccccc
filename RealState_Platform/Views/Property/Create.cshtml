@@ -1,143 +1,155 @@
-﻿@model PropertyCreateViewModel
+@model PropertyCreateViewModel
 
 @{
-    ViewData["Title"] = "Create Property";
+    ViewData["Title"] = "List a property";
 }
 
-<h2 class="mb-4 text-primary">Create Property</h2>
-
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-
-<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-<form asp-action="Create" method="post" enctype="multipart/form-data">
-
-    <!-- Basic Info -->
-    <div class="card shadow-sm mb-4 p-4">
-        <h5 class="mb-3 text-secondary">Basic Information</h5>
-
-        <div class="mb-3">
-            <label asp-for="Title" class="form-label"></label>
-            <input asp-for="Title" class="form-control" placeholder="Enter property title" />
-            <span asp-validation-for="Title" class="text-danger"></span>
+<div class="property-page">
+    <section class="property-page-hero">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-action="MyListings">My listings</a></li>
+                    <li class="breadcrumb-item active text-white-50" aria-current="page">New listing</li>
+                </ol>
+            </nav>
+            <h1 class="mb-1">Create a listing</h1>
+            <p class="text-white-50 mb-0 small">Add photos and details. Listings may be reviewed before they go live.</p>
         </div>
+    </section>
 
-        <div class="mb-3">
-            <label asp-for="Description" class="form-label"></label>
-            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter description"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
-        </div>
+    <div class="container pb-5">
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger rounded-3 border-0 shadow-sm mt-3">@TempData["Error"]</div>
+        }
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success rounded-3 border-0 shadow-sm mt-3">@TempData["Success"]</div>
+        }
+
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3 mt-3"></div>
+
+        <form asp-action="Create" method="post" enctype="multipart/form-data" class="mt-4">
+            @Html.AntiForgeryToken()
+
+            <div class="card form-section-card">
+                <div class="card-header"><i class="bi bi-text-left me-2 text-primary"></i>Basic information</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label"></label>
+                        <input asp-for="Title" class="form-control" placeholder="Short, descriptive title" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-0">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Highlights, neighborhood, parking…"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card form-section-card">
+                <div class="card-header"><i class="bi bi-sliders me-2 text-primary"></i>Property details</div>
+                <div class="card-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="ListingType" class="form-label"></label>
+                            <select asp-for="ListingType" class="form-select">
+                                <option value="">Select listing type</option>
+                                <option value="Sale">Sale</option>
+                                <option value="Rent">Rent</option>
+                            </select>
+                            <span asp-validation-for="ListingType" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="PropertyType" class="form-label"></label>
+                            <select asp-for="PropertyType" class="form-select">
+                                <option value="">Select property type</option>
+                                <option value="Apartment">Apartment</option>
+                                <option value="Villa">Villa</option>
+                                <option value="Commercial">Commercial</option>
+                            </select>
+                            <span asp-validation-for="PropertyType" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Price" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="Price" class="form-control" type="number" step="0.01" min="0" placeholder="0.00" />
+                            </div>
+                            <span asp-validation-for="Price" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Area" class="form-label">Area (sq ft)</label>
+                            <input asp-for="Area" class="form-control" type="number" step="1" min="0" placeholder="Optional" />
+                            <span asp-validation-for="Area" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Bedrooms" class="form-label"></label>
+                            <input asp-for="Bedrooms" class="form-control" type="number" min="0" />
+                            <span asp-validation-for="Bedrooms" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Bathrooms" class="form-label"></label>
+                            <input asp-for="Bathrooms" class="form-control" type="number" min="0" />
+                            <span asp-validation-for="Bathrooms" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card form-section-card">
+                <div class="card-header"><i class="bi bi-geo-alt me-2 text-primary"></i>Location</div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Address" class="form-label"></label>
+                            <input asp-for="Address" class="form-control" placeholder="Street and number" />
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="City" class="form-label"></label>
+                            <input asp-for="City" class="form-control" placeholder="City" />
+                            <span asp-validation-for="City" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="State" class="form-label"></label>
+                            <input asp-for="State" class="form-control" placeholder="State / region" />
+                            <span asp-validation-for="State" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="ZipCode" class="form-label"></label>
+                            <input asp-for="ZipCode" class="form-control" placeholder="ZIP / postal" />
+                            <span asp-validation-for="ZipCode" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card form-section-card">
+                <div class="card-header"><i class="bi bi-images me-2 text-primary"></i>Photos</div>
+                <div class="card-body">
+                    <label asp-for="Images" class="form-label">Upload images</label>
+                    <input asp-for="Images" class="form-control" type="file" multiple accept="image/*" />
+                    <small class="text-muted d-block mt-2">JPG or PNG. First image is used as the cover on listings.</small>
+                </div>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 pb-4">
+                <button type="submit" class="btn btn-accent-solid btn-lg rounded-3 px-4">
+                    <i class="bi bi-check2-circle me-2"></i>Publish listing
+                </button>
+                <a asp-action="MyListings" class="btn btn-outline-secondary btn-lg rounded-3 px-4">Cancel</a>
+            </div>
+        </form>
     </div>
-
-    <!-- Property Details -->
-    <div class="card shadow-sm mb-4 p-4">
-        <h5 class="mb-3 text-secondary">Property Details</h5>
-
-        <div class="row g-3 mb-3">
-            <div class="col-md-6">
-                <label asp-for="ListingType" class="form-label"></label>
-                <select asp-for="ListingType" class="form-select">
-                    <option value="">Select Listing Type</option>
-                    <option value="Sale">Sale</option>
-                    <option value="Rent">Rent</option>
-                </select>
-            </div>
-
-            <div class="col-md-6">
-                <label asp-for="PropertyType" class="form-label"></label>
-                <select asp-for="PropertyType" class="form-select">
-                    <option value="">Select Property Type</option>
-                    <option value="Apartment">Apartment</option>
-                    <option value="Villa">Villa</option>
-                    <option value="Commercial">Commercial</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="row g-3 mb-3">
-            <div class="col-md-6">
-                <label asp-for="Price" class="form-label"></label>
-                <input asp-for="Price" class="form-control" type="number" placeholder="Enter price" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-6">
-                <label asp-for="Area" class="form-label"></label>
-                <input asp-for="Area" class="form-control" type="number" placeholder="Enter area (sqm)" />
-                <span asp-validation-for="Area" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label asp-for="Bedrooms" class="form-label"></label>
-                <input asp-for="Bedrooms" class="form-control" type="number" />
-                <span asp-validation-for="Bedrooms" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-6">
-                <label asp-for="Bathrooms" class="form-label"></label>
-                <input asp-for="Bathrooms" class="form-control" type="number" />
-                <span asp-validation-for="Bathrooms" class="text-danger"></span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Location -->
-    <div class="card shadow-sm mb-4 p-4">
-        <h5 class="mb-3 text-secondary">Location</h5>
-
-        <div class="row g-3">
-            <div class="col-md-3">
-                <label asp-for="City" class="form-label"></label>
-                <input asp-for="City" class="form-control" placeholder="City" />
-                <span asp-validation-for="City" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-3">
-                <label asp-for="State" class="form-label"></label>
-                <input asp-for="State" class="form-control" placeholder="State / Area" />
-                <span asp-validation-for="State" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-3">
-                <label asp-for="ZipCode" class="form-label"></label>
-                <input asp-for="ZipCode" class="form-control" placeholder="Zip Code (Optional)" />
-                <span asp-validation-for="ZipCode" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-3">
-                <label asp-for="Address" class="form-label"></label>
-                <input asp-for="Address" class="form-control" placeholder="Full address" />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Images -->
-    <div class="card shadow-sm mb-4 p-4">
-        <h5 class="mb-3 text-secondary">Images</h5>
-
-        <div class="mb-3">
-            <label asp-for="Images" class="form-label"></label>
-            <input asp-for="Images" class="form-control" type="file" multiple />
-            <small class="text-muted">Upload multiple images (jpg, png)</small>
-        </div>
-    </div>
-
-    <!-- Buttons -->
-    <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-primary px-4">Create</button>
-        <a asp-action="MyListings" class="btn btn-outline-secondary">Cancel</a>
-    </div>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -1,0 +1,46 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav align-items-center ms-lg-3">
+@if (SignInManager.IsSignedIn(User))
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center bg-light rounded-pill px-3 py-2 shadow-sm" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle me-2 text-primary"></i>
+            <span class="fw-600 text-dark">@User.Identity?.Name</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg p-2 rounded-4 mt-2" aria-labelledby="userDropdown">
+            <li>
+                <div class="px-3 py-2 small text-muted border-bottom mb-1">
+                    Manage Account
+                </div>
+            </li>
+            <li><a class="dropdown-item rounded-3 py-2" asp-controller="Inquiry" asp-action="Inbox">My Inquiries</a></li>
+            <li><a class="dropdown-item rounded-3 py-2" asp-controller="Favorite" asp-action="MyFavorites">Favorites</a></li>
+            @if (User.IsInRole("Agent") || User.IsInRole("Admin"))
+            {
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item rounded-3 py-2" asp-controller="Property" asp-action="MyListings">My Listings</a></li>
+            }
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form class="form-inline" asp-area="" asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="dropdown-item rounded-3 py-2 text-danger border-0 w-100 text-start">
+                        Logout
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </li>
+}
+else
+{
+    <li class="nav-item me-2">
+        <a class="nav-link fw-600 text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+    </li>
+    <li class="nav-item">
+        <a class="btn btn-primary shadow-sm px-4" asp-area="" asp-controller="Account" asp-action="Register">Join Now</a>
+    </li>
+}
+</ul>

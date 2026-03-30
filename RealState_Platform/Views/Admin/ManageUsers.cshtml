@@ -1,55 +1,141 @@
-﻿@model List<UserWithRoleViewModel>
+@model List<UserWithRoleViewModel>
 
-<h2>Manage Users</h2>
+@{
+    ViewData["Title"] = "Manage users";
+    string RoleBadgeClass(string? role) => role switch
+    {
+        "Admin" => "bg-dark",
+        "Agent" => "bg-primary",
+        "Customer" => "bg-secondary",
+        _ => "bg-light text-dark border"
+    };
+}
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Change Role</th>
-            <th>Action</th>
-        </tr>
-    </thead>
+<div class="admin-page py-4">
+    <div class="container-fluid px-3 px-lg-4">
+        <div class="row g-4 admin-shell">
+            <div class="col-lg-3 col-xl-2">
+                @await Html.PartialAsync("_AdminNav")
+            </div>
+            <div class="col-lg-9 col-xl-10 admin-content">
+                <h1 class="admin-page-title h2 mb-1">Users</h1>
+                <p class="text-muted small mb-4">Assign roles and activate or block accounts.</p>
 
-    <tbody>
-        @foreach (var user in Model)
-        {
-            <tr>
-                <td>@user.Name</td>
-                <td>@user.Email</td>
-                <td>@(user.IsActive ? "Active" : "Blocked")</td>
+                <div class="admin-table-wrap d-none d-md-block">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Change role</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@user.Name</td>
+                                    <td class="text-muted small">@user.Email</td>
+                                    <td>
+                                        <span class="badge badge-role @RoleBadgeClass(user.CurrentRole)">@(string.IsNullOrEmpty(user.CurrentRole) ? "—" : user.CurrentRole)</span>
+                                    </td>
+                                    <td>
+                                        @if (user.IsActive)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Blocked</span>
+                                        }
+                                    </td>
+                                    <td style="min-width: 220px;">
+                                        <form asp-action="UpdateRole" method="post" class="d-flex gap-2 align-items-center flex-wrap">
+                                            <select name="newRole" class="form-select form-select-sm rounded-3" style="max-width: 140px;">
+                                                @foreach (var r in new[] { "Admin", "Agent", "Customer" })
+                                                {
+                                                    if (user.CurrentRole == r)
+                                                    {
+                                                        <option value="@r" selected>@r</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@r">@r</option>
+                                                    }
+                                                }
+                                            </select>
+                                            <input type="hidden" name="userId" value="@user.UserId" />
+                                            <button type="submit" class="btn btn-primary btn-sm rounded-3">Save</button>
+                                        </form>
+                                    </td>
+                                    <td class="text-end">
+                                        <form asp-action="ToggleUserStatus" method="post" class="d-inline">
+                                            <input type="hidden" name="userId" value="@user.UserId" />
+                                            <button type="submit" class="btn btn-sm rounded-3 @(user.IsActive ? "btn-outline-warning" : "btn-outline-success")">
+                                                @(user.IsActive ? "Block" : "Unblock")
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
 
-                <!-- Change Role -->
-                <td>
-                    <form asp-action="UpdateRole" method="post">
-                        <input type="hidden" name="userId" value="@user.UserId" />
-
-                        <select name="newRole" class="form-select">
-                            <option value="Admin" selected="@(user.CurrentRole == "Admin")">Admin</option>
-                            <option value="Agent" selected="@(user.CurrentRole == "Agent")">Agent</option>
-                            <option value="Customer" selected="@(user.CurrentRole == "Customer")">Customer</option>
-                        </select>
-
-                        <button type="submit" class="btn btn-primary btn-sm mt-1">
-                            Update
-                        </button>
-                    </form>
-                </td>
-
-                <!-- Block / Unblock -->
-                <td>
-                    <form asp-action="ToggleUserStatus" method="post">
-                        <input type="hidden" name="userId" value="@user.UserId" />
-
-                        <button class="btn btn-warning btn-sm">
-                            @(user.IsActive ? "Block" : "Unblock")
-                        </button>
-                    </form>
-                </td>
-
-            </tr>
-        }
-    </tbody>
-</table>
+                <div class="d-md-none">
+                    @foreach (var user in Model)
+                    {
+                        <div class="card border-0 shadow-sm rounded-4 mb-3 p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <div class="fw-semibold">@user.Name</div>
+                                    <div class="small text-muted">@user.Email</div>
+                                </div>
+                                <span class="badge badge-role @RoleBadgeClass(user.CurrentRole)">@(string.IsNullOrEmpty(user.CurrentRole) ? "—" : user.CurrentRole)</span>
+                            </div>
+                            <div class="mb-2">
+                                @if (user.IsActive)
+                                {
+                                    <span class="badge bg-success-subtle text-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger-subtle text-danger">Blocked</span>
+                                }
+                            </div>
+                            <form asp-action="UpdateRole" method="post" class="mb-2">
+                                <label class="small text-muted">Role</label>
+                                <div class="d-flex gap-2">
+                                    <select name="newRole" class="form-select form-select-sm rounded-3">
+                                        @foreach (var r in new[] { "Admin", "Agent", "Customer" })
+                                        {
+                                            if (user.CurrentRole == r)
+                                            {
+                                                <option value="@r" selected>@r</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@r">@r</option>
+                                            }
+                                        }
+                                    </select>
+                                    <input type="hidden" name="userId" value="@user.UserId" />
+                                    <button type="submit" class="btn btn-primary btn-sm rounded-3">Save</button>
+                                </div>
+                            </form>
+                            <form asp-action="ToggleUserStatus" method="post">
+                                <input type="hidden" name="userId" value="@user.UserId" />
+                                <button type="submit" class="btn btn-sm w-100 rounded-3 @(user.IsActive ? "btn-outline-warning" : "btn-outline-success")">
+                                    @(user.IsActive ? "Block user" : "Unblock user")
+                                </button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

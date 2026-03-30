@@ -1,88 +1,143 @@
-﻿@model PropertyEditViewModel
+@model PropertyEditViewModel
 
 @{
-    ViewData["Title"] = "Edit Property";
+    ViewData["Title"] = "Edit property";
 }
 
-<h2 class="mb-4 text-primary">Edit Property</h2>
-
-<form asp-action="Edit" method="post" enctype="multipart/form-data">
-
-    <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="PropertyType" />
-    <input type="hidden" asp-for="ListingType" />
-    <input type="hidden" asp-for="Address" />
-    <input type="hidden" asp-for="State" />
-    <input type="hidden" asp-for="ZipCode" />
-    <input type="hidden" asp-for="Area" />
-
-    <!-- Basic Info -->
-    <div class="card shadow-sm mb-4 p-4">
-        <h5 class="mb-3 text-secondary">Basic Information</h5>
-
-        <div class="mb-3">
-            <label asp-for="Title" class="form-label"></label>
-            <input asp-for="Title" class="form-control" />
-            <span asp-validation-for="Title" class="text-danger"></span>
+<div class="property-page">
+    <section class="property-page-hero">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-action="MyListings">My listings</a></li>
+                    <li class="breadcrumb-item active text-white-50" aria-current="page">Edit</li>
+                </ol>
+            </nav>
+            <h1 class="mb-1">Edit listing</h1>
+            <p class="text-white-50 mb-0 small">Update price, description, and photos. Some fields are fixed after publish.</p>
         </div>
+    </section>
 
-        <div class="mb-3">
-            <label asp-for="Description" class="form-label"></label>
-            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
-        </div>
-    </div>
+    <div class="container pb-5">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data" class="mt-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="PropertyType" />
+            <input type="hidden" asp-for="ListingType" />
+            <input type="hidden" asp-for="Address" />
+            <input type="hidden" asp-for="State" />
+            <input type="hidden" asp-for="ZipCode" />
+            <input type="hidden" asp-for="Area" />
 
-    <!-- Property Details -->
-    <div class="card shadow-sm mb-4 p-4">
-        <h5 class="mb-3 text-secondary">Property Details</h5>
-
-        <div class="row g-3 mb-3">
-            <div class="col-md-6">
-                <label asp-for="Price" class="form-label"></label>
-                <input asp-for="Price" class="form-control" type="number" min="0" step="0.01" />
-                <span asp-validation-for="Price" class="text-danger"></span>
+            <div class="card border-0 bg-light rounded-4 p-4 mb-4">
+                <h2 class="h6 fw-bold mb-3"><i class="bi bi-lock me-2 text-muted"></i>Locked fields (contact admin to change)</h2>
+                <div class="row g-3 small text-muted">
+                    <div class="col-md-4"><strong class="text-dark d-block">Listing</strong>@Model.ListingType · @Model.PropertyType</div>
+                    <div class="col-md-8"><strong class="text-dark d-block">Address</strong>@Model.Address, @Model.State @Model.ZipCode</div>
+                    <div class="col-md-4"><strong class="text-dark d-block">Area</strong>@Model.Area.ToString("N0") sq ft</div>
+                </div>
             </div>
 
-            <div class="col-md-6">
-                <label asp-for="City" class="form-label"></label>
-                <input asp-for="City" class="form-control" />
-                <span asp-validation-for="City" class="text-danger"></span>
+            <div class="card form-section-card">
+                <div class="card-header"><i class="bi bi-text-left me-2 text-primary"></i>Basic information</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-0">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label asp-for="Bedrooms" class="form-label"></label>
-                <input asp-for="Bedrooms" class="form-control" type="number" min="0" />
-                <span asp-validation-for="Bedrooms" class="text-danger"></span>
+            <div class="card form-section-card">
+                <div class="card-header"><i class="bi bi-currency-dollar me-2 text-primary"></i>Price &amp; specs</div>
+                <div class="card-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Price" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="Price" class="form-control" type="number" min="0" step="0.01" />
+                            </div>
+                            <span asp-validation-for="Price" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="City" class="form-label"></label>
+                            <input asp-for="City" class="form-control" />
+                            <span asp-validation-for="City" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Bedrooms" class="form-label"></label>
+                            <input asp-for="Bedrooms" class="form-control" type="number" min="0" />
+                            <span asp-validation-for="Bedrooms" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Bathrooms" class="form-label"></label>
+                            <input asp-for="Bathrooms" class="form-control" type="number" min="0" />
+                            <span asp-validation-for="Bathrooms" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-6">
-                <label asp-for="Bathrooms" class="form-label"></label>
-                <input asp-for="Bathrooms" class="form-control" type="number" min="0" />
-                <span asp-validation-for="Bathrooms" class="text-danger"></span>
+            <div class="card form-section-card">
+                <div class="card-header"><i class="bi bi-stars me-2 text-primary"></i>Features</div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input asp-for="HasGarage" class="form-check-input" type="checkbox" role="switch" />
+                                <label asp-for="HasGarage" class="form-check-label"></label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input asp-for="HasGarden" class="form-check-input" type="checkbox" role="switch" />
+                                <label asp-for="HasGarden" class="form-check-label"></label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input asp-for="HasPool" class="form-check-input" type="checkbox" role="switch" />
+                                <label asp-for="HasPool" class="form-check-label"></label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input asp-for="IsFurnished" class="form-check-input" type="checkbox" role="switch" />
+                                <label asp-for="IsFurnished" class="form-check-label"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Images -->
-    <div class="card shadow-sm mb-4 p-4">
-        <h5 class="mb-3 text-secondary">Property Images</h5>
+            <div class="card form-section-card">
+                <div class="card-header"><i class="bi bi-images me-2 text-primary"></i>Add more photos</div>
+                <div class="card-body">
+                    <label asp-for="Images" class="form-label">Upload additional images</label>
+                    <input asp-for="Images" class="form-control" type="file" multiple accept="image/*" />
+                    <small class="text-muted d-block mt-2">Existing photos stay on the listing; new files are appended.</small>
+                </div>
+            </div>
 
-        <div class="mb-3">
-            <label asp-for="Images" class="form-label"></label>
-            <input asp-for="Images" class="form-control" type="file" multiple />
-            <small class="text-muted">Leave empty if you don't want to change images.</small>
-        </div>
+            <div class="d-flex flex-wrap gap-2 pb-4">
+                <button type="submit" class="btn btn-primary btn-lg rounded-3 px-4">
+                    <i class="bi bi-save me-2"></i>Save changes
+                </button>
+                <a asp-action="MyListings" class="btn btn-outline-secondary btn-lg rounded-3 px-4">Cancel</a>
+            </div>
+        </form>
     </div>
-
-    <!-- Buttons -->
-    <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-success px-4">Update</button>
-        <a asp-action="MyListings" class="btn btn-secondary">Cancel</a>
-    </div>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
