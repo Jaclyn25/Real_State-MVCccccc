@@ -59,7 +59,7 @@ namespace RealState_Platform.Controllers
             return View(vm);
         }
         // Details (GET)
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {

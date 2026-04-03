@@ -51,7 +51,7 @@ namespace RealState_Platform.Controllers
                         id = c.Id,
                         content = c.Content,
                         userName = c.IsAnonymous ? "Anonymous" : (c.User?.UserName ?? "Anonymous"),
-                        userEmail = c.IsAnonymous ? "" : (c.User?.Email ?? ""),
+                        userFullName = c.IsAnonymous ? "Anonymous" : (c.User?.FullName ?? "Anonymous"),
                         createdAt = c.CreatedAt,
                         updatedAt = c.UpdatedAt,
                         isAnonymous = c.IsAnonymous,
@@ -78,7 +78,7 @@ namespace RealState_Platform.Controllers
                     id = c.Id,
                     content = c.Content,
                     userName = c.IsAnonymous ? "Anonymous" : (c.User?.UserName ?? "Anonymous"),
-                    userEmail = c.IsAnonymous ? "" : (c.User?.Email ?? ""),
+                    userFullName = c.IsAnonymous ? "Anonymous" : (c.User?.FullName ?? "Anonymous"),
                     createdAt = c.CreatedAt,
                     updatedAt = c.UpdatedAt,
                     isAnonymous = c.IsAnonymous,
@@ -128,7 +128,7 @@ namespace RealState_Platform.Controllers
                 
                 // Determine display name
                 var displayName = isAnonymous ? "Anonymous" : user.UserName;
-                var displayEmail = isAnonymous ? "" : user.Email;
+                var displayFullName = isAnonymous ? "Anonymous" : user.FullName;
 
                 try
                 {
@@ -139,7 +139,7 @@ namespace RealState_Platform.Controllers
                             commentId = createdComment.Id,
                             propertyId = propertyId,
                             userName = displayName,
-                            userEmail = displayEmail,
+                            userFullName = displayFullName,
                             content = content,
                             createdAt = createdComment.CreatedAt,
                             isAnonymous = isAnonymous,
@@ -160,7 +160,7 @@ namespace RealState_Platform.Controllers
                         id = createdComment.Id,
                         content = content,
                         userName = displayName,
-                        userEmail = displayEmail,
+                        userFullName = displayFullName,
                         createdAt = createdComment.CreatedAt,
                         isAnonymous = isAnonymous,
                         isOwner = true
