@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#FFE4B5"/>
+  <polygon points="200,25 350,140 350,240 50,240 50,140" fill="#daa520" stroke="#8b4513" stroke-width="3"/>
+  <polygon points="200,25 350,140 320,140 200,45 80,140 50,140" fill="#b8860b" stroke="#8b4513" stroke-width="2"/>
+  <rect x="110" y="80" width="50" height="50" fill="#87ceeb" stroke="#333" stroke-width="2"/>
+  <rect x="240" y="80" width="50" height="50" fill="#87ceeb" stroke="#333" stroke-width="2"/>
+  <rect x="110" y="160" width="50" height="50" fill="#87ceeb" stroke="#333" stroke-width="2"/>
+  <rect x="240" y="160" width="50" height="50" fill="#87ceeb" stroke="#333" stroke-width="2"/>
+  <rect x="175" y="125" width="50" height="85" fill="#654321" stroke="#333" stroke-width="2"/>
+  <rect x="50" y="245" width="300" height="35" fill="#8b4513"/>
+  <text x="200" y="290" font-size="18" font-weight="bold" text-anchor="middle" fill="#fff">Premium Villa</text>
+</svg>

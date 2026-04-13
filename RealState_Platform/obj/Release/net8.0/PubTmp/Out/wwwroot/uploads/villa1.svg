@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#grad2)"/>
+  <polygon points="200,20 360,140 340,140 340,240 60,240 60,140 40,140" fill="#fff8dc" stroke="#8b7355" stroke-width="3"/>
+  <rect x="100" y="60" width="60" height="60" fill="#87CEEB" stroke="#333" stroke-width="2"/>
+  <rect x="240" y="60" width="60" height="60" fill="#87CEEB" stroke="#333" stroke-width="2"/>
+  <rect x="100" y="160" width="60" height="60" fill="#87CEEB" stroke="#333" stroke-width="2"/>
+  <rect x="240" y="160" width="60" height="60" fill="#87CEEB" stroke="#333" stroke-width="2"/>
+  <rect x="170" y="120" width="60" height="100" fill="#8b4513" stroke="#333" stroke-width="2"/>
+  <polygon points="170,120 200,70 230,120" fill="#8b4513" stroke="#333" stroke-width="2"/>
+  <rect x="85" y="245" width="230" height="40" fill="#654321"/>
+  <text x="200" y="290" font-size="18" font-weight="bold" text-anchor="middle" fill="#fff">Luxury Villa</text>
+</svg>

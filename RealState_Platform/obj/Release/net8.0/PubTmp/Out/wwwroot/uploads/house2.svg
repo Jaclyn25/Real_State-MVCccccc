@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#98FB98"/>
+  <polygon points="200,35 320,120 320,240 80,240 80,120" fill="#cd853f" stroke="#333" stroke-width="3"/>
+  <polygon points="200,35 320,120 295,120 200,55 105,120 80,120" fill="#8b4513" stroke="#333" stroke-width="2"/>
+  <rect x="100" y="85" width="55" height="55" fill="#6495ed" stroke="#333" stroke-width="2"/>
+  <rect x="245" y="85" width="55" height="55" fill="#6495ed" stroke="#333" stroke-width="2"/>
+  <rect x="100" y="160" width="55" height="55" fill="#6495ed" stroke="#333" stroke-width="2"/>
+  <rect x="245" y="160" width="55" height="55" fill="#6495ed" stroke="#333" stroke-width="2"/>
+  <rect x="170" y="140" width="60" height="75" fill="#8b4513" stroke="#333" stroke-width="2"/>
+  <circle cx="200" cy="177" r="5" fill="#daa520"/>
+  <rect x="80" y="245" width="240" height="35" fill="#654321"/>
+  <text x="200" y="290" font-size="18" font-weight="bold" text-anchor="middle" fill="#fff">Cozy House</text>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#87CEEB"/>
+  <rect x="60" y="40" width="280" height="200" fill="#f0e68c" stroke="#333" stroke-width="3"/>
+  <rect x="80" y="60" width="50" height="50" fill="#4169E1" stroke="#333" stroke-width="2"/>
+  <rect x="150" y="60" width="50" height="50" fill="#4169E1" stroke="#333" stroke-width="2"/>
+  <rect x="220" y="60" width="50" height="50" fill="#4169E1" stroke="#333" stroke-width="2"/>
+  <rect x="290" y="60" width="30" height="40" fill="#ff0000" stroke="#333" stroke-width="2"/>
+  <rect x="80" y="130" width="50" height="50" fill="#4169E1" stroke="#333" stroke-width="2"/>
+  <rect x="150" y="130" width="50" height="50" fill="#4169E1" stroke="#333" stroke-width="2"/>
+  <rect x="220" y="130" width="50" height="50" fill="#4169E1" stroke="#333" stroke-width="2"/>
+  <polygon points="60,240 60,260 80,260 80,245 320,245 320,260 340,260 340,240" fill="#8b7355" stroke="#333" stroke-width="2"/>
+  <text x="200" y="290" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">Downtown Apartment</text>
+</svg>

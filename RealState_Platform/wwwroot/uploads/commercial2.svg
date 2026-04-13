@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#D3D3D3"/>
+  <rect x="45" y="35" width="310" height="190" fill="#a0522d" stroke="#333" stroke-width="3"/>
+  <rect x="75" y="60" width="55" height="55" fill="#20b2aa" stroke="#333" stroke-width="2"/>
+  <rect x="160" y="60" width="55" height="55" fill="#20b2aa" stroke="#333" stroke-width="2"/>
+  <rect x="245" y="60" width="55" height="55" fill="#20b2aa" stroke="#333" stroke-width="2"/>
+  <rect x="75" y="135" width="55" height="55" fill="#20b2aa" stroke="#333" stroke-width="2"/>
+  <rect x="160" y="135" width="55" height="55" fill="#20b2aa" stroke="#333" stroke-width="2"/>
+  <rect x="245" y="135" width="55" height="55" fill="#20b2aa" stroke="#333" stroke-width="2"/>
+  <rect x="130" y="225" width="140" height="55" fill="#704214" stroke="#333" stroke-width="2"/>
+  <rect x="45" y="230" width="310" height="50" fill="#696969"/>
+  <text x="200" y="290" font-size="18" font-weight="bold" text-anchor="middle" fill="#fff">Business Office</text>
+</svg>

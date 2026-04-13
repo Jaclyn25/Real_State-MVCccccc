@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#F0F8FF"/>
+  <rect x="50" y="40" width="300" height="185" fill="#f5f5dc" stroke="#333" stroke-width="3"/>
+  <rect x="70" y="65" width="55" height="55" fill="#5f9ea0" stroke="#333" stroke-width="2"/>
+  <rect x="155" y="65" width="55" height="55" fill="#5f9ea0" stroke="#333" stroke-width="2"/>
+  <rect x="240" y="65" width="55" height="55" fill="#5f9ea0" stroke="#333" stroke-width="2"/>
+  <rect x="70" y="145" width="55" height="55" fill="#5f9ea0" stroke="#333" stroke-width="2"/>
+  <rect x="155" y="145" width="55" height="55" fill="#5f9ea0" stroke="#333" stroke-width="2"/>
+  <rect x="240" y="145" width="55" height="55" fill="#5f9ea0" stroke="#333" stroke-width="2"/>
+  <circle cx="200" cy="220" r="20" fill="#faf0e6" stroke="#333" stroke-width="2"/>
+  <rect x="50" y="230" width="300" height="45" fill="#8b7355"/>
+  <text x="200" y="290" font-size="18" font-weight="bold" text-anchor="middle" fill="#fff">Spacious Apartment</text>
+</svg>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#90EE90;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#228B22;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#grad3)"/>
+  <polygon points="200,30 330,130 330,240 70,240 70,130" fill="#d2691e" stroke="#333" stroke-width="3"/>
+  <polygon points="200,30 330,130 310,130 200,50 90,130 70,130" fill="#8b4513" stroke="#333" stroke-width="2"/>
+  <rect x="100" y="80" width="50" height="50" fill="#87CEEB" stroke="#333" stroke-width="2"/>
+  <rect x="250" y="80" width="50" height="50" fill="#87CEEB" stroke="#333" stroke-width="2"/>
+  <rect x="100" y="160" width="50" height="50" fill="#87CEEB" stroke="#333" stroke-width="2"/>
+  <rect x="250" y="160" width="50" height="50" fill="#87CEEB" stroke="#333" stroke-width="2"/>
+  <rect x="175" y="140" width="50" height="70" fill="#654321" stroke="#333" stroke-width="2"/>
+  <circle cx="200" cy="175" r="4" fill="#daa520"/>
+  <rect x="70" y="245" width="260" height="30" fill="#654321"/>
+  <text x="200" y="290" font-size="18" font-weight="bold" text-anchor="middle" fill="#fff">Family House</text>
+</svg>

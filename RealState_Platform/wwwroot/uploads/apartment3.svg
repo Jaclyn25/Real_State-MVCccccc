@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#B0E0E6"/>
+  <rect x="55" y="45" width="290" height="190" fill="#ffe4c4" stroke="#333" stroke-width="3"/>
+  <rect x="75" y="65" width="48" height="48" fill="#4682b4" stroke="#333" stroke-width="2"/>
+  <rect x="145" y="65" width="48" height="48" fill="#4682b4" stroke="#333" stroke-width="2"/>
+  <rect x="215" y="65" width="48" height="48" fill="#4682b4" stroke="#333" stroke-width="2"/>
+  <rect x="285" y="65" width="35" height="38" fill="#ff4500" stroke="#333" stroke-width="2"/>
+  <rect x="75" y="135" width="48" height="48" fill="#4682b4" stroke="#333" stroke-width="2"/>
+  <rect x="145" y="135" width="48" height="48" fill="#4682b4" stroke="#333" stroke-width="2"/>
+  <rect x="215" y="135" width="48" height="48" fill="#4682b4" stroke="#333" stroke-width="2"/>
+  <polygon points="55,240 55,260 75,260 75,245 325,245 325,260 345,260 345,240" fill="#8b6f47" stroke="#333" stroke-width="2"/>
+  <text x="200" y="290" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">Urban Apartment</text>
+</svg>
