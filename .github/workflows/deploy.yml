@@ -1,34 +1,21 @@
-name: Deploy .NET Project to MonsterASP
+name: Deploy via FTP
 
 on:
   push:
     branches:
-      - main  # هيشتغل أول ما تعملي Push على فرع main
+      - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x' # تأكدي إنها نفس النسخة اللي شغالة بيها
-
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Build and Publish
-      run: dotnet publish -c Release -o ./publish
-
-    - name: Deploy via FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./publish/  # الفولدر اللي طلع فيه ملفات الـ Publish
-        server-dir: /wwwroot/  # المسار اللي MonsterASP بيقرأ منه
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./publish/
+          server-dir: /wwwroot/
+          state-name: .ftp-deploy-sync-state.json # بيساعد في تتبع الملفات
+          dangerous-clean-slate: false # تأكدي إنها false عشان ميمسحش ملفات السيرفر الأساسية
