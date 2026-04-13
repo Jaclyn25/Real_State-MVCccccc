@@ -6,16 +6,21 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+
+      - name: Build and Publish
+        # ضيفنا المسار الكامل عشان نضمن إننا عارفين الفولدر فين
+        run: dotnet publish -c Release -o ${{ github.workspace }}/publish
+
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./publish/
+          # غيرنا المسار هنا كمان عشان يطابق اللي فوق
+          local-dir: ${{ github.workspace }}/publish/
           server-dir: /wwwroot/
-          state-name: .ftp-deploy-sync-state.json # بيساعد في تتبع الملفات
-          dangerous-clean-slate: false # تأكدي إنها false عشان ميمسحش ملفات السيرفر الأساسية
