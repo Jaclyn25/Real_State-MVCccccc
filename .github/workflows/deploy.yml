@@ -12,7 +12,6 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Build and Publish
-        # ضيفنا المسار الكامل عشان نضمن إننا عارفين الفولدر فين
         run: dotnet publish -c Release -o ${{ github.workspace }}/publish
 
       - name: Deploy via FTP
@@ -21,6 +20,10 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          # غيرنا المسار هنا كمان عشان يطابق اللي فوق
           local-dir: ${{ github.workspace }}/publish/
           server-dir: /wwwroot/
+          # الإعدادات الجديدة لحل مشكلة الـ Connection:
+          protocol: ftp
+          port: 21
+          timeout: 60000 # زيادة وقت الانتظار
+          security: loose # جربي دي لو السيرفر مش بيدعم SSL كامل على الـ FTP
